@@ -15,8 +15,8 @@
  */
 
 // Includes for extra fuctions
-#include "keyboards/PiKeeb/special/voltage_measurement.c"
-#include "keyboards/PiKeeb/special/eeprom_config.c"
-#include "keyboards/PiKeeb/special/custom_keycodes.c"
-#include "keyboards/PiKeeb/special/oled_func.c"
-#include "keyboards/PiKeeb/special/other_func.c"
+#include "keyboards/pikeeb/special/voltage_measurement.c"
+#include "keyboards/pikeeb/special/eeprom_config.c"
+#include "keyboards/pikeeb/special/custom_keycodes.c"
+#include "keyboards/pikeeb/special/oled_func.c"
+#include "keyboards/pikeeb/special/other_func.c"
