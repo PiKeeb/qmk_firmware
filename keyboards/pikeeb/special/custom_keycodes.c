@@ -16,9 +16,9 @@
 
  // Define the keycodes used by macros in process_record_user
  enum custom_keycodes {
-     USB_SWITCH,
-     BATTERYMODE,
-     TS_SWITCH
+     USB_SW,
+     BATMODE,
+     TS_SW
  };
 
  /* Custom keycode action */
@@ -26,7 +26,7 @@
  bool process_record_user(uint16_t keycode, keyrecord_t *record) {
      switch (keycode) {
 
-     case USB_SWITCH:
+     case USB_SW:
          if (record->event.pressed) {
              user_config.usbswitch_on = !user_config.usbswitch_on;
              eeconfig_update_user(user_config.raw);
@@ -40,7 +40,7 @@
          }
          break;
 
-     case BATTERYMODE:
+     case BATMODE:
          if (record->event.pressed) {
              user_config.battery_fast_charge_on = !user_config.battery_fast_charge_on;
              eeconfig_update_user(user_config.raw);
@@ -56,7 +56,7 @@
          }
          break;
 
-     case TS_SWITCH:
+     case TS_SW:
          if (record->event.pressed) {
              user_config.touchscreen_on = !user_config.touchscreen_on;
              eeconfig_update_user(user_config.raw);
