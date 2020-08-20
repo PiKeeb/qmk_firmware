@@ -138,22 +138,3 @@ void render_status(void) {
     render_rpi_state();
     render_batery_state();
 }
-
-void oled_task_user(void) {
-    // Show logo when the inactivity timer is more than 60 seconds (60000 ms) long
-    if (timer_elapsed32(INACTIVE_TIMER) > 60000) {
-        render_logo();
-    // Toggle the bit when the inactivity timer is more than 120 seconds (120000 ms) long
-    } else if (timer_elapsed32(INACTIVE_TIMER) > 120000) {
-        OLED_TOG = true;
-    } else {
-        OLED_TOG = false;
-    };
-    // When the bit is on (true), turn off the display
-    if (OLED_TOG) {
-        oled_off();
-    } else {
-        oled_on();
-    };
-    render_status();
-}
