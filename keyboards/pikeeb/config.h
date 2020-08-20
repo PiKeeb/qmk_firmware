@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Setting up the OLED driver */
 #ifdef OLED_DRIVER_ENABLE
-#   define OLED_FONT_H "keyboards/pikeeb/glcdfont.c"
+#   define OLED_FONT_H "keyboards/pikeeb/lib/glcdfont.c"
 #   define OLED_FONT_START 0
 #   define OLED_FONT_END 223
 #   define OLED_FONT_WIDTH 6

@@ -14,27 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/****************************/
-/* VOLTAGE MEASUREMENT CODE */
-/****************************/
-
-#include "analog.h"
-
-// Define number of samples to take voltage measurements
-static int NUM_VSAMPLES = 10;
-
-// Define voltage devision factor
-static float VDF = 9.33;
-
-// Define voltage reference
-static float VREF = 5.00;
-
-// Define ADC resolution
-static int ADC_RES = 1024;
-
-// Define values for voltage reading
-static float VBAT;
-static float RPIV;
+#include "voltage_measurement.h"
 
 // Measurement functions
 void vbat_measure(void) {
@@ -71,7 +51,7 @@ void vbat_measure(void) {
 }
 
 void rpiv_measure(void) {
-  
+
     // Define values to get destroyed after the function ends
     uint32_t RPIV_RAW = 0;                                  // The RAW value = no caclualtion
     float RPIV_OUT = 0.2;                                   // The OUT value = devided calculated volage

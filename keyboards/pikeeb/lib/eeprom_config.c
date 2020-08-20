@@ -14,9 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Includes for extra fuctions
-#include "keyboards/pikeeb/special/voltage_measurement.c"
-#include "keyboards/pikeeb/special/eeprom_config.c"
-#include "keyboards/pikeeb/special/custom_keycodes.c"
-#include "keyboards/pikeeb/special/oled_func.c"
-#include "keyboards/pikeeb/special/other_func.c"
+#include "eeprom_config.h"
+
+// Default EEPROM config in case of the EEPROM reset
+void eeconfig_init_user(void) {
+    user_config.raw = 0;
+    user_config.usbswitch_on = true; // We want this switched on (PC mode)
+    user_config.battery_fast_charge_on = false; // We want this switched off (Slow charging mode)
+    user_config.touchscreen_on = false; // We want this switched off (Touch Screen is on)
+    eeconfig_update_user(user_config.raw); // Write the default config to EEPROM
+    keyboard_post_init_user(); // Call the keymap level init
+};
