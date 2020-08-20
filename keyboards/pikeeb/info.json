@@ -1,11 +1,11 @@
 {
-    "keyboard_name": "PiKeeb",
+    "keyboard_name": "pikeeb",
     "url": "",
     "maintainer": "ILWrites",
     "width": 15,
     "height": 5,
     "layouts": {
-        "LAYOUT_ORTH_1U": {
+        "LAYOUT_orth_1u_full": {
             "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
@@ -88,7 +88,7 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_ORTH_2USPC_SPLIT": {
+        "LAYOUT_orth_2u_spc_split": {
             "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
@@ -169,9 +169,9 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_625U_SPC_275U_RSFT_125U_RMOD":{
-            "layout":[
-                [{"x":0, "y":0},
+        "LAYOUT_stag_2u_bspc_625u_spc_275u_rsft_125u_rmod": {
+            "layout": [
+                {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
                 {"x":3, "y":0},
@@ -238,8 +238,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_625U_SPC_275U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_625u_spc_275u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -308,8 +308,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_625U_SPC_175U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_625u_spc_175u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -378,8 +378,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_625U_SPC_175U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_625u_spc_175u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -449,8 +449,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_275U_SPLIT_SPC_275U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_275u_split_spc_275u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -520,8 +520,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_275U_SPLIT_SPC_275U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_275u_split_spc_275u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -592,8 +592,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_275U_SPLIT_SPC_175U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_275u_split_spc_175u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -664,8 +664,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_275U_SPLIT_SPC_175U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_275u_split_spc_175u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -737,8 +737,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_1U_SPLIT_SPC_275U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_1u_split_spc_275u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -809,8 +809,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_1U_SPLIT_SPC_275U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_1u_split_spc_275u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -882,8 +882,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_1U_SPLIT_SPC_175U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_1u_split_spc_175u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -955,8 +955,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_2U_BSPC_1U_SPLIT_SPC_175U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_2u_bspc_1u_split_spc_175u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1029,9 +1029,9 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_625U_SPC_275U_RSFT_125U_RMOD":{
-            "layout":[
-                [{"x":0, "y":0},
+        "LAYOUT_stag_1u_bspc_625u_spc_275u_rsft_125u_rmod": {
+            "layout": [
+                {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
                 {"x":3, "y":0},
@@ -1099,8 +1099,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_625U_SPC_275U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_625u_spc_275u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1170,8 +1170,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_625U_SPC_175U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_625u_spc_175u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1241,8 +1241,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_625U_SPC_175U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_625u_spc_175u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1313,8 +1313,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_275U_SPLIT_SPC_275U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_275u_split_spc_275u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1385,8 +1385,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_275U_SPLIT_SPC_275U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_275u_split_spc_275u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1458,8 +1458,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_275U_SPLIT_SPC_175U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_275u_split_spc_175u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1531,8 +1531,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_275U_SPLIT_SPC_175U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_275u_split_spc_175u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1605,8 +1605,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_1U_SPLIT_SPC_275U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_1u_split_spc_275u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1678,8 +1678,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_1U_SPLIT_SPC_275U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_1u_split_spc_275u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1752,8 +1752,8 @@
                 {"x":14, "y":4}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_1U_SPLIT_SPC_175U_RSFT_125U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_1u_split_spc_175u_rsft_125u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},
@@ -1826,8 +1826,8 @@
                 {"x":13.75, "y":4, "w":1.25}
             ]
         },
-        "LAYOUT_STAG_1U_BSPC_1U_SPLIT_SPC_175U_RSFT_1U_RMOD":{
-            "layout":[
+        "LAYOUT_stag_1u_bspc_1u_split_spc_175u_rsft_1u_rmod": {
+            "layout": [
                 {"x":0, "y":0},
                 {"x":1, "y":0},
                 {"x":2, "y":0},

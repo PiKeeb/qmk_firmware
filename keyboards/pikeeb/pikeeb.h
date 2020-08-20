@@ -39,7 +39,7 @@
  * │40 │41 │42 │43 │44 │45 │46 │47 │48 │49 │4a │4b │4c │4d │4e │
  * └───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_ORTH_1U( \
+#define LAYOUT_orth_1u_full( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, k1e, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c, k2d, k2e, \
@@ -67,7 +67,7 @@
  * │40 │41 │42 │43 │44 │45     │47 │  48   │4a │4b │4c │4d │4e │
  * └───┴───┴───┴───┴───┴───────┴───┴───────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_ORTH_2USPC_SPLIT( \
+#define LAYOUT_orth_2u_spc_split( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, k1e, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c, k2d, k2e, \
@@ -118,7 +118,7 @@
  * │40  │41  │42  │44                      │47  │48  │49  │4b  │
  * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_2U_BSPC_625U_SPC_275U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_2u_bspc_625u_spc_275u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -146,7 +146,7 @@
  * │40  │41  │42  │44                      │47 │48 │49 │4a │4b │
  * └────┴────┴────┴────────────────────────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_2U_BSPC_625U_SPC_275U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_2u_bspc_625u_spc_275u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -174,7 +174,7 @@
  * │40  │41  │42  │44                      │47  │48  │49  │4b  │
  * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_2U_BSPC_625U_SPC_175U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_2u_bspc_625u_spc_175u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -202,7 +202,7 @@
  * │40  │41  │42  │44                      │47 │48 │49 │4a │4b │
  * └────┴────┴────┴────────────────────────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_2U_BSPC_625U_SPC_175U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_2u_bspc_625u_spc_175u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -230,7 +230,7 @@
  * │40  │41  │42  │43        │44  │45      │47  │48  │49  │4b  │
  * └────┴────┴────┴──────────┴────┴────────┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_2U_BSPC_275U_SPLIT_SPC_275U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_2u_bspc_275u_split_spc_275u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -258,7 +258,7 @@
  * │40  │41  │42  │43        │44  │45      │47 │48 │49 │4a │4b │
  * └────┴────┴────┴──────────┴────┴────────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_2U_BSPC_275U_SPLIT_SPC_275U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_2u_bspc_275u_split_spc_275u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -286,7 +286,7 @@
  * │40  │41  │42  │43        │44  │45      │47  │48  │49  │4b  │
  * └────┴────┴────┴──────────┴────┴────────┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_2U_BSPC_275U_SPLIT_SPC_175U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_2u_bspc_275u_split_spc_175u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -314,7 +314,7 @@
  * │40  │41  │42  │43        │44  │45      │47 │48 │49 │4a │4b │
  * └────┴────┴────┴──────────┴────┴────────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_2U_BSPC_275U_SPLIT_SPC_175U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_2u_bspc_275u_split_spc_175u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -342,7 +342,7 @@
  * │40  │41  │42  │43 │44      │45     │46 │47  │48  │49  │4b  │
  * └────┴────┴────┴───┴────────┴───────┴───┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_2U_BSPC_1U_SPLIT_SPC_275U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_2u_bspc_1u_split_spc_275u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -370,7 +370,7 @@
  * │40  │41  │42  │43 │44      │45     │46 │47 │48 │49 │4a │4b │
  * └────┴────┴────┴───┴────────┴───────┴───┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_2U_BSPC_1U_SPLIT_SPC_275U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_2u_bspc_1u_split_spc_275u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -398,7 +398,7 @@
  * │40  │41  │42  │43 │44      │45     │46 │47  │48  │49  │4b  │
  * └────┴────┴────┴───┴────────┴───────┴───┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_2U_BSPC_1U_SPLIT_SPC_175U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_2u_bspc_1u_split_spc_175u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -426,7 +426,7 @@
  * │40  │41  │42  │43 │44      │45     │46 │47 │48 │49 │4a │4b │
  * └────┴────┴────┴───┴────────┴───────┴───┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_2U_BSPC_1U_SPLIT_SPC_175U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_2u_bspc_1u_split_spc_175u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -454,7 +454,7 @@
  * │40  │41  │42  │44                      │47  │48  │49  │4b  │
  * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_1U_BSPC_625U_SPC_275U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_1u_bspc_625u_spc_275u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -482,7 +482,7 @@
  * │40  │41  │42  │44                      │47 │48 │49 │4a │4b │
  * └────┴────┴────┴────────────────────────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_1U_BSPC_625U_SPC_275U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_1u_bspc_625u_spc_275u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -510,7 +510,7 @@
  * │40  │41  │42  │44                      │47  │48  │49  │4b  │
  * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_1U_BSPC_625U_SPC_175U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_1u_bspc_625u_spc_175u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -538,7 +538,7 @@
  * │40  │41  │42  │44                      │47 │48 │49 │4a │4b │
  * └────┴────┴────┴────────────────────────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_1U_BSPC_625U_SPC_175U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_1u_bspc_625u_spc_175u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -566,7 +566,7 @@
  * │40  │41  │42  │43        │44  │45      │47  │48  │49  │4b  │
  * └────┴────┴────┴──────────┴────┴────────┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_1U_BSPC_275U_SPLIT_SPC_275U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_1u_bspc_275u_split_spc_275u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -594,7 +594,7 @@
  * │40  │41  │42  │43        │44  │45      │47 │48 │49 │4a │4b │
  * └────┴────┴────┴──────────┴────┴────────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_1U_BSPC_275U_SPLIT_SPC_275U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_1u_bspc_275u_split_spc_275u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -622,7 +622,7 @@
  * │40  │41  │42  │43        │44  │45      │47  │48  │49  │4b  │
  * └────┴────┴────┴──────────┴────┴────────┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_1U_BSPC_275U_SPLIT_SPC_175U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_1u_bspc_275u_split_spc_175u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -650,7 +650,7 @@
  * │40  │41  │42  │43        │44  │45      │47 │48 │49 │4a │4b │
  * └────┴────┴────┴──────────┴────┴────────┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_1U_BSPC_275U_SPLIT_SPC_175U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_1u_bspc_275u_split_spc_175u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -678,7 +678,7 @@
  * │40  │41  │42  │43 │44      │45     │46 │47  │48  │49  │4b  │
  * └────┴────┴────┴───┴────────┴───────┴───┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_1U_BSPC_1U_SPLIT_SPC_275U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_1u_bspc_1u_split_spc_275u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -706,7 +706,7 @@
  * │40  │41  │42  │43 │44      │45     │46 │47 │48 │49 │4a │4b │
  * └────┴────┴────┴───┴────────┴───────┴───┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_1U_BSPC_1U_SPLIT_SPC_275U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_1u_bspc_1u_split_spc_275u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -734,7 +734,7 @@
  * │40  │41  │42  │43 │44      │45     │46 │47  │48  │49  │4b  │
  * └────┴────┴────┴───┴────────┴───────┴───┴────┴────┴────┴────┘
 */
-#define LAYOUT_STAG_1U_BSPC_1U_SPLIT_SPC_175U_RSFT_125U_RMOD( \
+#define LAYOUT_stag_1u_bspc_1u_split_spc_175u_rsft_125u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
@@ -762,7 +762,7 @@
  * │40  │41  │42  │43 │44      │45     │46 │47 │48 │49 │4a │4b │
  * └────┴────┴────┴───┴────────┴───────┴───┴───┴───┴───┴───┴───┘
 */
-#define LAYOUT_STAG_1U_BSPC_1U_SPLIT_SPC_175U_RSFT_1U_RMOD( \
+#define LAYOUT_stag_1u_bspc_1u_split_spc_175u_rsft_1u_rmod( \
     k00, k01, k02, k03, k04, k05, k06, k07, k08, k09, k0a, k0b, k0c, k0d, k0e, \
     k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k1a, k1b, k1c, k1d, \
     k20, k21, k22, k23, k24, k25, k26, k27, k28, k29, k2a, k2b, k2c,      \
