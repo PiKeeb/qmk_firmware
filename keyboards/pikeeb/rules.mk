@@ -26,5 +26,9 @@ ENCODER_ENABLE = yes				# Enable encoders
 # Bluetooth chip
 BLUETOOTH = AdafruitBLE
 
-# Analog Driver Enable
+# ADC Driver enable for voltage measurement
 SRC += analog.c
+
+# Library management
+CUSTOM_LIB_PATH = keyboards/pikeeb/lib
+VPATH += $(CUSTOM_LIB_PATH)
