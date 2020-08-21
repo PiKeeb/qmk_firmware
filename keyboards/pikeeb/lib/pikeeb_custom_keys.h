@@ -14,14 +14,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "eeprom_config.h"
+#pragma once
 
-// Default EEPROM config in case of the EEPROM reset
-void eeconfig_init_user(void) {
-    user_config.raw = 0;
-    user_config.usbswitch_on = true; // We want this switched on (PC mode)
-    user_config.battery_fast_charge_on = false; // We want this switched off (Slow charging mode)
-    user_config.touchscreen_on = false; // We want this switched off (Touch Screen is on)
-    eeconfig_update_user(user_config.raw); // Write the default config to EEPROM
-    keyboard_post_init_user(); // Call the keymap level init
+enum custom_keys {
+  USB_SW,
+  BATMODE,
+  TS_SW
+};
+
+bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+
+        case USB_SW:
+            if (record->event.pressed) {
+                switch_usb();
+            }
+            break;
+
+        case BATMODE:
+            if (record->event.pressed) {
+                switch_batmode();
+            }
+            break;
+
+        case TS_SW:
+            if (record->event.pressed) {
+                switch_ts();
+            }
+            break;
+        }
+        return true;
 };

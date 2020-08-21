@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
 
 #include "config_common.h"
 
@@ -40,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Setting up the OLED driver */
 #ifdef OLED_DRIVER_ENABLE
-#   define OLED_FONT_H "keyboards/pikeeb/lib/glcdfont.c"
+#   define OLED_FONT_H "keyboards/pikeeb/lib/glcdfont_pikeeb.c"
 #   define OLED_FONT_START 0
 #   define OLED_FONT_END 223
 #   define OLED_FONT_WIDTH 6
@@ -93,7 +92,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define F1_LED_PIN E0
 
 /* Other settings */
-
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
