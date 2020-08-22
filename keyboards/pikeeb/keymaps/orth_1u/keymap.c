@@ -15,8 +15,8 @@
  */
 
 #include QMK_KEYBOARD_H
-#include "pikeeb_code.h"
-#include "pikeeb_custom_keys.h"
+
+// NOTE: When enumerating your own keycodes/macros, please, use NEW_SAFE_RANGE instead of SAFE_RANGE
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
