@@ -14,14 +14,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #include "quantum.h"
 
-/***************************************************************/
-/*                                                             */
-/*                  ORTHOLINEAR LAYOUT VARIANTS                */
-/*                   FOR ORTHOLINEAR PCB ONLY                  */
-/*                                                             */
-/***************************************************************/
+#define BAT_MEAS_TIME 60000 // time in ms to take the VBAT voltage measurement
+#define RPI_MEAS_TIME 3000 // time in ms to take the RPI voltage measurement
+//#define INACT_TIME_LOGO 120000 // time in ms to show the logo
+//#define INACT_TIME_OFF 240000 // time in ms to turn off the oled
+
+enum pikeeb_keycodes {
+  USB_SW = SAFE_RANGE,
+  BATMODE,
+  TS_SW,
+  NEW_SAFE_RANGE
+};
+
+
+/***************************************************************
+ *                                                             *
+ *                  ORTHOLINEAR LAYOUT VARIANTS                *
+ *                 ARE FOR ORTHOLINEAR PCB ONLY                *
+ *                                                             *
+ ***************************************************************/
 
 /* VARIANT 1 / 2
  * Full Ortholinear Martix layout
@@ -79,28 +94,32 @@
     { k40, k41, k42, k43, k44, k45, KC_NO, k47, k48, KC_NO, k4a, k4b, k4c, k4d, k4e }  \
 }
 
-/***************************************************************/
-/*                                                             */
-/*                   STAGGERED LAYOUT VARIANTS                 */
-/*                    FOR STAGGERED PCB ONLY                   */
-/*                                                             */
-/***************************************************************/
+/***************************************************************
+ *                                                             *
+ *                  STAGGERED LAYOUT VARIANTS                  *
+ *                 ARE FOR STAGGERED PCB ONLY                  *
+ *                                                             *
+ ***************************************************************/
 
-/* NOTE FOR ISO USERS:
- *
- * ANSI and ISO layouts look like this:
- *
- *      ANSI                 ISO
- *  ┬─┴─┬─────┤          ┬─┴─┬─────┤
- *  │1c │1d   │          │1c │1d   │
- *  ┴┬──┴─────┤          ┴┬──┴─┐   │
- *   │2d      │           │2d  │   │
- *   ┴────────┤           ┴────┴───┤
- *
- * If you are using ISO ENTER instead of ANSI,
- * please, change the keymap assignment of
- * 1d key to 2d keycode and 2d key to 1d keycode
-*/
+/***************************************************************
+ *                                                             *
+ *                      NOTE FOR ISO USERS                     *
+ *                                                             *
+ ***************************************************************
+ *                                                             *
+ *          ANSI and ISO layouts look like this:               *
+ *                                                             *
+ *               ANSI                 ISO                      *
+ *           ┬─┴─┬─────┤          ┬─┴─┬─────┤                  *
+ *           │1c │1d   │          │1c │1d   │                  *
+ *           ┴┬──┴─────┤          ┴┬──┴─┐   │                  *
+ *            │2d      │           │2d  │   │                  *
+ *            ┴────────┤           ┴────┴───┤                  *
+ *                                                             *
+ *     If you are using ISO ENTER instead of ANSI, please,     *
+ *  change the keymap of 1d key to 2d keycode and vise versa   *
+ *                                                             *
+ ***************************************************************/
 
 /* VARIANT 1 / 24
  * Staggered layout with 2U Backspace, 6.25U Spacebar, 2.75U RShift and 4x1.25U Modifiers
