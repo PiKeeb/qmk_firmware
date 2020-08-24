@@ -51,6 +51,7 @@ static uint16_t BLINK_TIMER = 0; // Blink timer for the battery indicator
 // Define toggle booleans
 static bool BLINK_TOG = false;
 static bool OLED_TOG = false;
+static bool OLED_FORCE_OFF = false;
 
 // Voltage measurement defines //
 
@@ -313,14 +314,18 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 switch_batmode();
             }
-            break;
+        break;
         case TS_SW:
             if (record->event.pressed) {
                 switch_ts();
             }
-            break;
-        }
-
+        break;
+        case DISP_SW:
+            if (record->event.pressed) {
+                OLED_FORCE_OFF = !OLED_FORCE_OFF;
+            }
+        break;
+    };
     // Hand control to *_user
     return process_record_user(keycode, record);
 };
@@ -345,9 +350,22 @@ void render_layer_state(void) {
         0xD5, 0xD6, 0x00
     };
     oled_write_P(layerlogo, false);
-    oled_write_P(PSTR("Base"), layer_state_is(0));
-    oled_write_P(PSTR("Func"), layer_state_is(1));
-    oled_write_P(PSTR("Sett"), layer_state_is(2));
+    oled_write_P(PSTR("DFT"), layer_state_is(_BASE));
+    oled_write_P(PSTR("FN1"), layer_state_is(_FN1));
+    oled_write_P(PSTR("FN2"), layer_state_is(_FN2));
+    oled_write_P(PSTR("SET"), layer_state_is(_SET));
+    oled_write_P(PSTR("L04"), layer_state_is(4));
+    oled_write_P(PSTR("L05"), layer_state_is(5));
+    oled_write_P(PSTR("L06"), layer_state_is(6));
+    oled_write_P(PSTR("L07"), layer_state_is(7));
+    oled_write_P(PSTR("L08"), layer_state_is(8));
+    oled_write_P(PSTR("L09"), layer_state_is(8));
+    oled_write_P(PSTR("L10"), layer_state_is(10));
+    oled_write_P(PSTR("L11"), layer_state_is(11));
+    oled_write_P(PSTR("L12"), layer_state_is(12));
+    oled_write_P(PSTR("L13"), layer_state_is(13));
+    oled_write_P(PSTR("L14"), layer_state_is(14));
+    oled_write_P(PSTR("L15"), layer_state_is(15));
 }
 
 // Caps/Num Lock state monitor
@@ -386,7 +404,7 @@ void render_rpi_state(void) {
     };
     oled_write_P(RPIlogo, false);
     if (RPIV>= 5.3) {
-        oled_write_P(PSTR("OV"), false);
+        oled_write_P(PSTR("OV "), false);
     } else if (RPIV< 5.3 && RPIV>= 4.8) {
         oled_write_P(PSTR("ON"), false);
     } else if (RPIV< 4.8 && RPIV>= 3.3){
@@ -444,19 +462,23 @@ void render_status(void) {
     render_batery_state();
 }
 
+
 void oled_task_user(void) {
-    // Show logo when the inactivity timer is more than 60 seconds (60000 ms) long
-    if (timer_elapsed32(INACTIVE_TIMER) > INACTIVE_TIME_LOGO) {
-        render_logo();
-    // Toggle the bit when the inactivity timer is more than 120 seconds (120000 ms) long
-  } else if (timer_elapsed32(INACTIVE_TIMER) > INACTIVE_TIME_OFF) {
+    if (OLED_FORCE_OFF) {
+        oled_off();
+        return;
+    }
+    if (timer_elapsed32(INACTIVE_TIMER) > INACTIVE_TIME_OFF) {
         OLED_TOG = true;
+    } else if (timer_elapsed32(INACTIVE_TIMER) > INACTIVE_TIME_LOGO) {
+        render_logo();
     } else {
         OLED_TOG = false;
     };
     // When the bit is on (true), turn off the display
     if (OLED_TOG) {
         oled_off();
+        return;
     } else {
         oled_on();
     };

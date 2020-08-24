@@ -18,18 +18,43 @@
 
 #include "quantum.h"
 
+/***************************************************************
+ *  WARNING!  CAUTION!  WARNING!  WARNING!  CAUTION!  WARNING! *
+ *  CAUTION!                                          CAUTION! *
+ *  WARNING!          DO NOT CHANGE ANYTHING          WARNING! *
+ *  CAUTION!             ABOVE THIS POINT             CAUTION! *
+ *  WARNING!                                          WARNING! *
+ *  CAUTION!  WARNING!  CAUTION!  CAUTION!  WARNING!  CAUTION! *
+ ***************************************************************/
+
 #define BAT_MEAS_TIME 60000 // time in ms to take the VBAT voltage measurement
 #define RPI_MEAS_TIME 3000 // time in ms to take the RPI voltage measurement
 //#define INACT_TIME_LOGO 120000 // time in ms to show the logo
 //#define INACT_TIME_OFF 240000 // time in ms to turn off the oled
 
+enum layer_names {
+    _BASE,
+    _FN1,
+    _FN2,
+    _SET
+};
+
+/***************************************************************
+ *  WARNING!  CAUTION!  WARNING!  WARNING!  CAUTION!  WARNING! *
+ *  CAUTION!                                          CAUTION! *
+ *  WARNING!          DO NOT CHANGE ANYTHING          WARNING! *
+ *  CAUTION!            BEYOND THIS POINT             CAUTION! *
+ *  WARNING!                                          WARNING! *
+ *  CAUTION!  WARNING!  CAUTION!  CAUTION!  WARNING!  CAUTION! *
+ ***************************************************************/
+
 enum pikeeb_keycodes {
   USB_SW = SAFE_RANGE,
   BATMODE,
   TS_SW,
+  DISP_SW,
   NEW_SAFE_RANGE
 };
-
 
 /***************************************************************
  *                                                             *
