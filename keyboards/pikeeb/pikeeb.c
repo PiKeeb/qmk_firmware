@@ -26,7 +26,7 @@
 #ifdef INACT_OFF
     static uint32_t INACTIVE_TIME_OFF = INACT_OFF;
 #else
-    static uint32_t INACTIVE_TIME_OFF = 60000;
+    static uint32_t INACTIVE_TIME_OFF = 120000;
 #endif
 
 #ifdef BAT_MEAS_TIME
@@ -40,7 +40,6 @@
 #else
     static uint32_t RPIV_TIME = 3000;
 #endif
-
 
 // Define timers
 static uint32_t INACTIVE_TIMER = 0; // Inactivity timer
@@ -56,7 +55,7 @@ static bool OLED_FORCE_OFF = false;
 // Voltage measurement defines //
 
 // Define number of samples to take voltage measurements
-static int NUM_VSAMPLES;
+static int NUM_VSAMPLES = 10;
 
 // Define voltage devision factor
 static float VDF = 9.33;
@@ -90,11 +89,11 @@ kb_config_t kb_config;
 // Default EEPROM config in case of the EEPROM reset
 void eeconfig_init_kb(void) {
     kb_config.raw = 0;
-    kb_config.usbswitch_on = true; // We want this switched on (PC mode)
+    kb_config.usbswitch_on = false; // We want this switched off (PC mode)
     kb_config.battery_fast_charge_on = false; // We want this switched off (Slow charging mode)
     kb_config.touchscreen_on = false; // We want this switched off (Touch Screen is on)
-    eeconfig_update_kb(kb_config.raw); // Write the default config to EEPROM
-    keyboard_post_init_kb(); // Call the keymap level init
+    eeconfig_update_kb(kb_config.raw); // Write the default KB config to EEPROM
+    keyboard_post_init_kb(); // Call the KB level init
 
     // Hand control to *_user
     eeconfig_init_user();
@@ -263,7 +262,7 @@ bool led_update_kb(led_t led_state) {
 void switch_usb(void) {
     kb_config.usbswitch_on = !kb_config.usbswitch_on;
     eeconfig_update_kb(kb_config.raw);
-    if (kb_config.usbswitch_on) { // ON = PC MODE
+    if (kb_config.usbswitch_on) { // OFF = PC MODE
         writePinHigh(USBSW_PIN);
         writePinHigh(USBSW_LED_PIN);
     } else {
@@ -289,7 +288,7 @@ void switch_batmode(void) {
 void switch_ts(void) {
     kb_config.touchscreen_on = !kb_config.touchscreen_on;
     eeconfig_update_kb(kb_config.raw);
-    if (kb_config.touchscreen_on) { // ON = PC MODE
+    if (kb_config.touchscreen_on) {
         writePinHigh(TS_EN_PIN);
     } else {
         writePinLow(TS_EN_PIN);
@@ -350,22 +349,18 @@ void render_layer_state(void) {
         0xD5, 0xD6, 0x00
     };
     oled_write_P(layerlogo, false);
-    oled_write_P(PSTR("DFT"), layer_state_is(_BASE));
-    oled_write_P(PSTR("FN1"), layer_state_is(_FN1));
-    oled_write_P(PSTR("FN2"), layer_state_is(_FN2));
-    oled_write_P(PSTR("SET"), layer_state_is(_SET));
-    oled_write_P(PSTR("L04"), layer_state_is(4));
-    oled_write_P(PSTR("L05"), layer_state_is(5));
-    oled_write_P(PSTR("L06"), layer_state_is(6));
-    oled_write_P(PSTR("L07"), layer_state_is(7));
-    oled_write_P(PSTR("L08"), layer_state_is(8));
-    oled_write_P(PSTR("L09"), layer_state_is(8));
-    oled_write_P(PSTR("L10"), layer_state_is(10));
-    oled_write_P(PSTR("L11"), layer_state_is(11));
-    oled_write_P(PSTR("L12"), layer_state_is(12));
-    oled_write_P(PSTR("L13"), layer_state_is(13));
-    oled_write_P(PSTR("L14"), layer_state_is(14));
-    oled_write_P(PSTR("L15"), layer_state_is(15));
+    if (layer_state_is(_BASE)) {
+        oled_write_P(PSTR("DFT"), false);
+    };
+    if (layer_state_is(_FN1)) {
+        oled_write_P(PSTR("FN1"), false);
+    };
+    if (layer_state_is(_FN2)) {
+        oled_write_P(PSTR("FN2"), false);
+    };
+    if (layer_state_is(_SET)) {
+        oled_write_P(PSTR("SET"), false);
+    };
 }
 
 // Caps/Num Lock state monitor
@@ -373,7 +368,6 @@ void render_lock_state(led_t led_state) {
     static const char PROGMEM locklogo[] = {
         0xD7, 0xD8, 0x00
     };
-    oled_write_P(locklogo, false);
     oled_write_P(locklogo, false);
     oled_write_P(led_state.num_lock ? PSTR("N") : PSTR("~"), false);
     oled_write_P(led_state.caps_lock ? PSTR("C") : PSTR("~"), false);
@@ -390,27 +384,22 @@ void render_touchscreen_state(void) {
         0xDD, 0xDE, 0x00
     };
     oled_write_P(TSlogo, false);
-
-    if (kb_config.touchscreen_on) {
-        oled_write_P(onlogo, false);
-    } else {
-        oled_write_P(offlogo, false);
-    };
+    oled_write_P(kb_config.touchscreen_on ? onlogo : offlogo, false);
 }
 
 void render_rpi_state(void) {
-    static const char PROGMEM RPIlogo[] = {
+    static const char PROGMEM RPIsmalllogo[] = {
         0x9F, 0xBF, 0x00
     };
-    oled_write_P(RPIlogo, false);
+    oled_write_P(RPIsmalllogo, false);
     if (RPIV>= 5.3) {
-        oled_write_P(PSTR("OV "), false);
+        oled_write_P(PSTR("OV!"), false);
     } else if (RPIV< 5.3 && RPIV>= 4.8) {
-        oled_write_P(PSTR("ON"), false);
+        oled_write_P(PSTR("ON "), false);
     } else if (RPIV< 4.8 && RPIV>= 3.3){
-        oled_write_P(PSTR("UV"), false);
+        oled_write_P(PSTR("UV!"), false);
     } else {
-        oled_write_P(PSTR("~~"), false);
+        oled_write_P(PSTR("OFF"), false);
     };
 }
 
@@ -433,13 +422,13 @@ void render_batery_state(void) {
     static const char PROGMEM blink[] = {
         0x00, 0x00, 0x00
     };
-    if (VBAT >= 3.9) {
+    if (VBAT > 3.9) {
         oled_write_P(bat_100_logo, false);
-    } else if (VBAT < 3.9 && VBAT > 3.6) {
+    } else if (VBAT <= 3.9 && VBAT > 3.6) {
         oled_write_P(bat_75_logo, false);
-    } else if (VBAT < 3.6 && VBAT > 3.5 ) {
+    } else if (VBAT <= 3.6 && VBAT > 3.5 ) {
         oled_write_P(bat_50_logo, false);
-    } else if (VBAT < 3.5 && VBAT > 3.2 ) {
+    } else if (VBAT <= 3.5 && VBAT > 3.2 ) {
         oled_write_P(bat_25_logo, false);
     } else if (VBAT <= 3.2) {
         if (timer_elapsed(BLINK_TIMER) > 1500) { // 1.5s timer to flip the toggle
