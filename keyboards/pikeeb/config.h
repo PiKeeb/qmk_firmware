@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* Keyboard Matrix Assignments */
 #define MATRIX_ROW_PINS { C1, C2, C3, C4, C5 }
 #define MATRIX_COL_PINS { C7, A7, A6, A5, A4, A3, A2, A1, A0, F7, F6, F5, F4, F3, F2 }
-#define UNUSED_PINS
+//#define UNUSED_PINS
 
 /* COL2ROW, ROW2COL */
 #define DIODE_DIRECTION COL2ROW
@@ -52,10 +52,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #   define ENCODERS_PAD_B { C0, E5 }
 #endif
 
-/* Screen backlight settings */
-#define BACKLIGHT_PIN B6
-#define BACKLIGHT_LEVELS 5
-
 /* Audio pin settings */
 #ifdef AUDIO_ENABLE
 #   define C6_AUDIO
@@ -68,11 +64,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #   define AdafruitBleIRQPin E6
 #endif
 
+/* Backlight pin settings */
+#ifdef BACKLIGHT_ENABLE
+#   define BACKLIGHT_PIN B6 // Pin for turning backligh on or off
+#   define BACKLIGHT_LEVELS 5
+#endif
+
 /* Other pins settings */
 
 // Switches:
 #define USBSW_PIN B0 // Pin for USB switch
 #define TS_EN_PIN E3 // Pin for turning touch screen IC on or off
+#define BL_EN_PIN B6
 
 // Charger settings:
 #define BAT_SEL_PIN B7 // Pin for choosing the charger type (USB or charger)

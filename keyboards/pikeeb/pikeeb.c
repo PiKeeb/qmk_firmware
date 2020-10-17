@@ -14,20 +14,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Debug include
+#include "debug.h"
+
 #include "pikeeb.h"
 #include "analog.h"
 
 #ifdef INACT_LOGO
-    static uint32_t INACTIVE_TIME_LOGO = INACT_LOGO;
+    static uint32_t OLED_LOGO_TIME = INACT_LOGO;
 #else
-    static uint32_t INACTIVE_TIME_LOGO = 60000;
+    static uint32_t OLED_LOGO_TIME = 60000;
 #endif
 
 #ifdef INACT_OFF
-    static uint32_t INACTIVE_TIME_OFF = INACT_OFF;
+    static uint32_t OLED_OFF_TIME = INACT_OFF;
 #else
-    static uint32_t INACTIVE_TIME_OFF = 120000;
+    static uint32_t OLED_OFF_TIME = 120000;
 #endif
+
 
 #ifdef BAT_MEAS_TIME
     static uint32_t VBAT_TIME = BAT_MEAS_TIME;
@@ -45,30 +49,24 @@
 static uint32_t INACTIVE_TIMER = 0; // Inactivity timer
 static uint32_t RPIV_TIMER = 0; // Raspberyy Pi voltage measurement timer
 static uint32_t VBAT_TIMER = 0; // Battery voltage measurement timer
-static uint16_t BLINK_TIMER = 0; // Blink timer for the battery indicator
 
 // Define toggle booleans
-static bool BLINK_TOG = false;
 static bool OLED_TOG = false;
+static bool LOGO_TOG = false;
+static bool OLED_LOGO_CLEAR = false;
 static bool OLED_FORCE_OFF = false;
-
-// Voltage measurement defines //
-
-// Define number of samples to take voltage measurements
-static int NUM_VSAMPLES = 10;
 
 // Define voltage devision factor
 static float VDF = 9.33;
-
 // Define voltage reference
-static float VREF = 5.00;
-
+static uint32_t VREF = 5200;
 // Define ADC resolution
-static int ADC_RES = 1024;
+static uint32_t ADC_RES = 1024;
 
 // Define values for voltage reading
-static float VBAT;
-static float RPIV;
+static int VBAT;
+static int RPIV;
+static int NUM_SAMPLES = 10;
 
 //----------------------//
 // EEPROM configuration //
@@ -81,6 +79,7 @@ typedef union {
     bool usbswitch_on :1;
     bool battery_fast_charge_on :1;
     bool touchscreen_on :1;
+    bool backlight_on :1;
   };
 } kb_config_t;
 
@@ -91,12 +90,10 @@ void eeconfig_init_kb(void) {
     kb_config.raw = 0;
     kb_config.usbswitch_on = false; // We want this switched off (PC mode)
     kb_config.battery_fast_charge_on = false; // We want this switched off (Slow charging mode)
-    kb_config.touchscreen_on = false; // We want this switched off (Touch Screen is on)
+    kb_config.touchscreen_on = false; // We want this switched off (Touch Screen is off)
+    kb_config.backlight_on = false;
     eeconfig_update_kb(kb_config.raw); // Write the default KB config to EEPROM
     keyboard_post_init_kb(); // Call the KB level init
-
-    // Hand control to *_user
-    eeconfig_init_user();
 }
 
 //-------------------------------//
@@ -104,142 +101,142 @@ void eeconfig_init_kb(void) {
 //-------------------------------//
 
 void vbat_measure(void) {
-
     // Define values to get destroyed after the function ends
-    uint32_t VBAT_RAW = 0;                                  // The RAW value = no caclualtion
-    float VBAT_OUT = 0.0;                                   // The OUT value = devided calculated volage
-    float VBAT_REAL = 0.0;                                  // The REAL value = calculated voltage
-    int VBAT_COUNT = 0;                                     // The counter of number of samples taken
-    uint8_t VBAT_10MS_TIMER = 0;                            // The 10ms timer
-    bool VBAT_10MS_TIMER_TOG = false;                       // The toggle to get the measurement
+    int VBAT_RAW = 0; // RAW = no caclualtion
+    int VBAT_DIV = 0; // DIV = divided value in mV
+    int VBAT_REAL = 0; // REAL = calculated value in mV
+    int NUM_VBAT_SCOUNT = 0; // Samples taken counter
 
     // Take the measurements
-    writePinHigh(VBAT_MON_EN_PIN);                          // Disable discharge protection MOSFET
-    VBAT_10MS_TIMER = timer_read();                         // Enable 10ms timer
-    while (VBAT_COUNT < NUM_VSAMPLES) {
-      if (timer_elapsed(VBAT_10MS_TIMER) > 10) {            // 10ms timer to flip the toggle
-          VBAT_10MS_TIMER = timer_read();                   // Reset the timer
-          VBAT_10MS_TIMER_TOG = !VBAT_10MS_TIMER_TOG;       // Flip the bit
-      };
-      if (VBAT_10MS_TIMER_TOG) {
-          VBAT_RAW += analogReadPin(VBAT_MON_ADC_PIN);      // Read the analog voltage and sum it up.
-          VBAT_COUNT++;                                     // Increment the counter by 1
-      };
+    writePinLow(VBAT_MON_EN_PIN); // Disable discharge protection MOSFET
+    while (NUM_VBAT_SCOUNT < NUM_SAMPLES) {
+        VBAT_RAW += analogReadPin(VBAT_MON_ADC_PIN); // Read the analog voltage and sum it up.
+        NUM_VBAT_SCOUNT++; // Advance the counter
     };
-    writePinLow(VBAT_MON_EN_PIN);                           // Enable discharge protection MOSFET
+    writePinHigh(VBAT_MON_EN_PIN); // Enable discharge protection MOSFET
 
     // Start the calculation
-    VBAT_OUT = (VBAT_RAW / NUM_VSAMPLES * VREF) / ADC_RES;  // Make the calculation for the OUT voltage
-    VBAT_REAL = VBAT_OUT * VDF;                             // Make the calculation for the REAL voltage
+    VBAT_DIV = VBAT_RAW * VREF / ADC_RES / NUM_SAMPLES;
+    VBAT_REAL = (VBAT_DIV * VDF);
 
     // Output the calculation
-    VBAT = VBAT_REAL;                                       // Output the REAL value into the static
+    VBAT = VBAT_REAL;
+    dprintf("VBAT_RAW: %u\n", VBAT_RAW);
+    dprintf("VBAT_DIV: %u mV\n", VBAT_DIV);
+    dprintf("VBAT: %u mV\n", VBAT);
 }
 
 void rpiv_measure(void) {
-
     // Define values to get destroyed after the function ends
-    uint32_t RPIV_RAW = 0;                                  // The RAW value = no caclualtion
-    float RPIV_OUT = 0.2;                                   // The OUT value = devided calculated volage
-    float RPIV_REAL = 0.0;                                  // The REAL value = calculated voltage
-    int RPIV_COUNT = 0;                                     // The counter of number of samples taken
-    uint8_t RPIV_10MS_TIMER = 0;                            // The 10ms timer
-    bool RPIV_10MS_TIMER_TOG = false;                       // The toggle to get the measurement
+    int RPIV_RAW = 0; // RAW = no caclualtion
+    int RPIV_DIV = 0; // DIV = divided value in mV
+    int RPIV_REAL = 0; // REAL = calculated value in mV
+    int NUM_RPIV_SCOUNT = 0; // Samples taken counter
 
     // Take the measurements
-    RPIV_10MS_TIMER = timer_read();                         // Enable 10ms timer
-    while (RPIV_COUNT < NUM_VSAMPLES) {
-        if (timer_elapsed(RPIV_10MS_TIMER) > 10) {          // 10ms timer to flip the toggle
-            RPIV_10MS_TIMER = timer_read();                 // Reset the timer
-            RPIV_10MS_TIMER_TOG = !RPIV_10MS_TIMER_TOG;     // Flip the bit
-        };
-        if (RPIV_10MS_TIMER_TOG) {
-            RPIV_RAW += analogReadPin(RPIV_MON_ADC_PIN);    // Read the analog voltage and sum it up.
-            RPIV_COUNT++;                                   // Increment the counter by 1
-        };
+    while (NUM_RPIV_SCOUNT < NUM_SAMPLES) {
+        RPIV_RAW += analogReadPin(RPIV_MON_ADC_PIN);; // Read the analog voltage and sum it up.
+        NUM_RPIV_SCOUNT++; // Advance the counter
     };
 
     // Start the calculation
-    RPIV_OUT = (RPIV_RAW / NUM_VSAMPLES * VREF) / ADC_RES;  // Make the calculation for the OUT voltage
-    RPIV_REAL = RPIV_OUT * VDF;                             // Make the calculation for the REAL voltage
+    RPIV_DIV = RPIV_RAW * VREF / ADC_RES / NUM_SAMPLES;
+    RPIV_REAL = (RPIV_DIV * VDF);
+
+    // Check for noise
+    if (RPIV_REAL < 1000) {
+        RPIV_REAL = 0;
+    };
 
     // Output the calculation
-    if (RPIV_REAL < 0.5) {
-        RPIV_REAL = 0;                                      // Account for noise
-    };
-    RPIV = RPIV_REAL;                                       // Output the REAL value to the static
+    RPIV = RPIV_REAL;
+    dprintf("RPIV_RAW: %u\n", RPIV_RAW);
+    dprintf("RPIV_DIV: %u mV\n", RPIV_DIV);
+    dprintf("RPIV: %u mV\n", RPIV);
 }
-
-//-----------------//
-// Check functions //
-//-----------------//
-
-void time_check(void) {
-    if (INACTIVE_TIME_OFF<INACTIVE_TIME_LOGO) {
-        INACTIVE_TIME_LOGO = 60000;
-        INACTIVE_TIME_OFF = 120000;
-    };
-}
-
 
 //----------------------------//
 // Keyboard related functions //
 //----------------------------//
 
 // Enable EEPROM and initialize the timers
-void keyboard_post_init_kb(void) { // Call the keymap level matrix init.
-    kb_config.raw = eeconfig_read_kb(); // Read the user config from EEPROM
+void keyboard_post_init_kb(void) { // Call the keymap level matrix init
+    // Debug enable
+    debug_enable=true;
+    debug_matrix=true;
+
+    //Setting the pins to output
+    setPinOutput(USBSW_PIN);
+    setPinOutput(BAT_SEL_PIN);
+    setPinOutput(BAT_SEL_PIN);
+    setPinOutput(TS_EN_PIN);
+    setPinOutput(BL_EN_PIN);
+
+    //Setting the LED pins to output
+    setPinOutput(NUM_LED_PIN);
+    setPinOutput(CAPS_LED_PIN);
+    setPinOutput(F0_LED_PIN);
+    setPinOutput(F1_LED_PIN);
+    setPinOutput(USBSW_LED_PIN);
+    setPinOutput(FCH_LED_PIN);
+
+    //Setting the ADC pins
+    setPinOutput(VBAT_MON_EN_PIN);
+    setPinInput(VBAT_MON_ADC_PIN);
+    setPinInput(RPIV_MON_ADC_PIN);
+
+    kb_config.raw = eeconfig_read_kb(); // Read the kb config from EEPROM
     // Switch pins according to the settings of the EEPROM config
     if (kb_config.usbswitch_on) {
         writePinHigh(USBSW_PIN);
-        writePinHigh(USBSW_LED_PIN);
     } else {
         writePinLow(USBSW_PIN);
-        writePinLow(USBSW_LED_PIN);
-    }
+    };
     if (kb_config.battery_fast_charge_on) {
         writePinHigh(BAT_SEL_PIN);
         writePinHigh(BAT_PROG_PIN);
-        writePinHigh(FCH_LED_PIN);
     } else {
         writePinLow(BAT_SEL_PIN);
         writePinLow(BAT_PROG_PIN);
-        writePinLow(FCH_LED_PIN);
-    }
-    if (kb_config.touchscreen_on) {
-        writePinHigh(TS_EN_PIN);
+    };
+    if (kb_config.backlight_on) {
+        writePinHigh(BL_EN_PIN);
     } else {
+        writePinLow(BL_EN_PIN);
+    };
+    if (kb_config.touchscreen_on) {
         writePinLow(TS_EN_PIN);
+    } else {
+        writePinHigh(TS_EN_PIN);
     };
 
-    // Initialize timers for blink & voltage measurements
-    BLINK_TIMER = timer_read();
+    // Initialize timers for voltage measurements
     VBAT_TIMER = timer_read32();
     RPIV_TIMER = timer_read32();
 
     // Check the inactive time for errors
-    time_check();
+    if (OLED_OFF_TIME<OLED_LOGO_TIME) {
+        OLED_LOGO_TIME = 12000;
+        OLED_OFF_TIME = 24000;
+    };
 
     // Take the voltage measurement
     vbat_measure();
     rpiv_measure();
-
-    // Hand control to *_user
-    keyboard_post_init_user();
 }
 
 void matrix_scan_kb(void) {
-   if (timer_elapsed32(VBAT_TIMER) > VBAT_TIME) { // initiate the RPi voltage measurement every 60 seconds
-       vbat_measure();
-       VBAT_TIMER = timer_read32();
-   }
-   if (timer_elapsed32(RPIV_TIMER) > RPIV_TIME) {
-       rpiv_measure();
-       RPIV_TIMER = timer_read32();
-   };
 
-   // Hand control to *_user
-   matrix_scan_user();
+    if (timer_elapsed32(VBAT_TIMER) > VBAT_TIME) {
+        dprint("VBAT_TIMER elapsed!\n");
+        vbat_measure();
+        VBAT_TIMER = timer_read32();
+    };
+    if (timer_elapsed32(RPIV_TIMER) > RPIV_TIME) {
+        dprint("RPIV_TIMER elapsed!\n");
+        rpiv_measure();
+        RPIV_TIMER = timer_read32();
+    };
 }
 
 //------------------//
@@ -247,52 +244,12 @@ void matrix_scan_kb(void) {
 //------------------//
 
 bool led_update_kb(led_t led_state) {
-   bool res = led_update_user(led_state);
-   if(res) {
-       writePin(NUM_LED_PIN, led_state.num_lock);
-       writePin(CAPS_LED_PIN, led_state.caps_lock);
-   }
-   return res;
-}
-
-//---------------------//
-// Switching functions //
-//---------------------//
-
-void switch_usb(void) {
-    kb_config.usbswitch_on = !kb_config.usbswitch_on;
-    eeconfig_update_kb(kb_config.raw);
-    if (kb_config.usbswitch_on) { // OFF = PC MODE
-        writePinHigh(USBSW_PIN);
-        writePinHigh(USBSW_LED_PIN);
-    } else {
-        writePinLow(USBSW_PIN);
-        writePinLow(USBSW_LED_PIN);
-    };
-}
-
-void switch_batmode(void) {
-    kb_config.battery_fast_charge_on = !kb_config.battery_fast_charge_on;
-    eeconfig_update_kb(kb_config.raw);
-    if (kb_config.battery_fast_charge_on) { // ON = FAST CHARGING (1A MAX)
-        writePinHigh(BAT_SEL_PIN);
-        writePinHigh(BAT_PROG_PIN);
-        writePinHigh(FCH_LED_PIN);
-    } else {
-        writePinLow(BAT_SEL_PIN);
-        writePinLow(BAT_PROG_PIN);
-        writePinLow(FCH_LED_PIN);
-    };
-}
-
-void switch_ts(void) {
-    kb_config.touchscreen_on = !kb_config.touchscreen_on;
-    eeconfig_update_kb(kb_config.raw);
-    if (kb_config.touchscreen_on) {
-        writePinHigh(TS_EN_PIN);
-    } else {
-        writePinLow(TS_EN_PIN);
-    };
+    bool res = led_update_user(led_state);
+    if(res) {
+        writePin(NUM_LED_PIN, led_state.num_lock);
+        writePin(CAPS_LED_PIN, led_state.caps_lock);
+     }
+     return res;
 }
 
 //-----------------//
@@ -301,33 +258,86 @@ void switch_ts(void) {
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
-      INACTIVE_TIMER = timer_read32();
+        INACTIVE_TIMER = timer_read32();
+        if (LOGO_TOG) {
+          OLED_LOGO_CLEAR = true;
+        };
     };
+    dprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
     switch (keycode) {
         case USB_SW:
             if (record->event.pressed) {
-                switch_usb();
+                dprint("USBSW pressed. Switching USB:\n");
+                kb_config.usbswitch_on = !kb_config.usbswitch_on;
+                eeconfig_update_kb(kb_config.raw);
+                if (kb_config.usbswitch_on) {
+                    dprint("To PI Mode\n");
+                    writePinHigh(USBSW_PIN);
+                } else {
+                    dprint("To PC Mode\n");
+                    writePinLow(USBSW_PIN);
+                }
             }
-            break;
+            return false;
         case BATMODE:
             if (record->event.pressed) {
-                switch_batmode();
+                dprint("BATMODE pressed. Switching Fast Charging:");
+                kb_config.battery_fast_charge_on = !kb_config.battery_fast_charge_on;
+                eeconfig_update_kb(kb_config.raw);
+                if (kb_config.battery_fast_charge_on) {
+                    dprint("To ON");
+                    writePinHigh(BAT_SEL_PIN);
+                    writePinHigh(BAT_PROG_PIN);
+                } else {
+                    dprint("To OFF");
+                    writePinLow(BAT_SEL_PIN);
+                    writePinLow(BAT_PROG_PIN);
+                }
             }
-        break;
+            return false;
         case TS_SW:
             if (record->event.pressed) {
-                switch_ts();
+                dprint("TS_SW pressed. Switching Touchscreen:\n");
+                kb_config.touchscreen_on = !kb_config.touchscreen_on;
+                eeconfig_update_kb(kb_config.raw);
+                if (kb_config.touchscreen_on) {
+                    dprint("To ON\n");
+                    writePinLow(TS_EN_PIN);
+                } else {
+                    dprint("To OFF\n");
+                    writePinHigh(TS_EN_PIN);
+                }
             }
-        break;
-        case DISP_SW:
+            return false;
+        case BL_SW:
             if (record->event.pressed) {
-                OLED_FORCE_OFF = !OLED_FORCE_OFF;
+                dprint("BL_SW pressed. Switching Backlight:\n");
+                kb_config.backlight_on = !kb_config.backlight_on;
+                eeconfig_update_kb(kb_config.raw);
+                if (kb_config.backlight_on) {
+                    dprint("To ON\n");
+                    writePinHigh(BL_EN_PIN);
+                } else {
+                    dprint("To OFF\n");
+                    writePinLow(BL_EN_PIN);
+                }
             }
-        break;
-    };
-    // Hand control to *_user
-    return process_record_user(keycode, record);
-};
+            return false;
+        case OLED_SW:
+            if (record->event.pressed) {
+                dprint("OLED_SW pressed. Switching OLED:\n");
+                OLED_FORCE_OFF = !OLED_FORCE_OFF;
+                if (OLED_FORCE_OFF) {
+                  dprint("To OFF\n");
+                } else {
+                  dprint("To ON\n");
+                }
+            }
+            return false;
+        default:
+            return true;
+    }
+}
 
 //------------------------//
 // OLED Display functions //
@@ -340,6 +350,7 @@ void render_logo(void) {
         0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
         0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
     };
+    oled_set_cursor(0, 0);
     oled_write_P(pikeeb_logo, false);
 }
 
@@ -361,6 +372,7 @@ void render_layer_state(void) {
     if (layer_state_is(_SET)) {
         oled_write_P(PSTR("SET"), false);
     };
+    oled_set_cursor(7, 0);
 }
 
 // Caps/Num Lock state monitor
@@ -369,41 +381,24 @@ void render_lock_state(led_t led_state) {
         0xD7, 0xD8, 0x00
     };
     oled_write_P(locklogo, false);
-    oled_write_P(led_state.num_lock ? PSTR("N") : PSTR("~"), false);
-    oled_write_P(led_state.caps_lock ? PSTR("C") : PSTR("~"), false);
+    oled_write_P(led_state.num_lock ? PSTR("N") : PSTR("-"), false);
+    oled_write_P(led_state.caps_lock ? PSTR("C") : PSTR("-"), false);
+    oled_set_cursor(13, 0);
 }
 
 void render_touchscreen_state(void) {
     static const char PROGMEM TSlogo[] = {
         0xD9, 0xDA, 0x00
     };
-    static const char PROGMEM offlogo[] = {
-        0xDB, 0xDC, 0x00
-    };
-    static const char PROGMEM onlogo[] = {
-        0xDD, 0xDE, 0x00
-    };
     oled_write_P(TSlogo, false);
-    oled_write_P(kb_config.touchscreen_on ? onlogo : offlogo, false);
-}
-
-void render_rpi_state(void) {
-    static const char PROGMEM RPIsmalllogo[] = {
-        0x9F, 0xBF, 0x00
-    };
-    oled_write_P(RPIsmalllogo, false);
-    if (RPIV>= 5.3) {
-        oled_write_P(PSTR("OV!"), false);
-    } else if (RPIV< 5.3 && RPIV>= 4.8) {
-        oled_write_P(PSTR("ON "), false);
-    } else if (RPIV< 4.8 && RPIV>= 3.3){
-        oled_write_P(PSTR("UV!"), false);
-    } else {
-        oled_write_P(PSTR("OFF"), false);
-    };
+    oled_write_P(kb_config.touchscreen_on ? PSTR("ON ") : PSTR("OFF"), false);
+    oled_set_cursor(19, 0);
 }
 
 void render_batery_state(void) {
+    static const char PROGMEM bat_charge_logo[] = {
+        0x07, 0x08, 0x00
+    };
     static const char PROGMEM bat_100_logo[] = {
         0x01, 0x02, 0x00
     };
@@ -419,57 +414,105 @@ void render_batery_state(void) {
     static const char PROGMEM bat_0_logo[] = {
         0x05, 0x06, 0x00
     };
-    static const char PROGMEM blink[] = {
-        0x00, 0x00, 0x00
-    };
-    if (VBAT > 3.9) {
+    if (VBAT > 4500) {
+        oled_write_P(bat_charge_logo, false);
+    } else if (VBAT <= 4200 && VBAT > 3825) {
         oled_write_P(bat_100_logo, false);
-    } else if (VBAT <= 3.9 && VBAT > 3.6) {
+    } else if (VBAT <= 3825 && VBAT > 3700) {
         oled_write_P(bat_75_logo, false);
-    } else if (VBAT <= 3.6 && VBAT > 3.5 ) {
+    } else if (VBAT <= 3700 && VBAT > 3650 ) {
         oled_write_P(bat_50_logo, false);
-    } else if (VBAT <= 3.5 && VBAT > 3.2 ) {
+    } else if (VBAT <= 3650 && VBAT > 3450 ) {
         oled_write_P(bat_25_logo, false);
-    } else if (VBAT <= 3.2) {
-        if (timer_elapsed(BLINK_TIMER) > 1500) { // 1.5s timer to flip the toggle
-            BLINK_TIMER = timer_read();
-            BLINK_TOG = !BLINK_TOG; // simple flip
-        };
-        if (BLINK_TOG) {
-            oled_write_P(blink, false);
-        } else {
-            oled_write_P(bat_0_logo, false);
-        };
+    } else if (VBAT <= 3450) {
+        oled_write_P(bat_0_logo, false);
     };
+    oled_set_cursor(0, 2);
+}
+
+static const char PROGMEM pilogo[] = {
+    0x9B, 0x9C, 0x00
+};
+
+void render_rpi_state(void) {
+    oled_write_P(pilogo, false);
+    if (RPIV >= 5300) {
+        oled_write_P(PSTR(":OV!"), false);
+    } else if (RPIV < 5300 && RPIV >= 4800) {
+        oled_write_P(PSTR(":ON "), false);
+    } else if (RPIV < 4800 && RPIV >= 3300){
+        oled_write_P(PSTR(":UV!"), false);
+    } else {
+        oled_write_P(PSTR(":OFF"), false);
+    };
+    oled_set_cursor(7, 2);
+}
+
+void render_usb_state(void) {
+    static const char PROGMEM pclogo[] = {
+        0x99, 0x9A, 0x00
+    };
+    oled_write_P(PSTR("USB:"), false);
+    oled_write_P(kb_config.usbswitch_on ? pilogo : pclogo, false);
+    oled_set_cursor(16, 2);
+}
+
+void render_backlight_state(void) {
+    static const char PROGMEM bl_off_logo[] = {
+        0x9D, 0x9E, 0x00
+    };
+    static const char PROGMEM bl_on_logo[] = {
+        0xBD, 0xBE, 0x00
+    };
+    oled_write_P(PSTR("BL:"), false);
+    oled_write_P(kb_config.backlight_on ? bl_on_logo : bl_off_logo, false);
 }
 
 void render_status(void) {
     render_layer_state();
     render_lock_state(host_keyboard_led_state());
     render_touchscreen_state();
-    render_rpi_state();
     render_batery_state();
+    render_rpi_state();
+    render_usb_state();
+    render_backlight_state();
 }
 
-
-void oled_task_user(void) {
-    if (OLED_FORCE_OFF) {
-        oled_off();
-        return;
-    }
-    if (timer_elapsed32(INACTIVE_TIMER) > INACTIVE_TIME_OFF) {
+void check_inactive_timer(void) {
+    if (timer_elapsed32(INACTIVE_TIMER) > OLED_OFF_TIME) {
         OLED_TOG = true;
-    } else if (timer_elapsed32(INACTIVE_TIMER) > INACTIVE_TIME_LOGO) {
-        render_logo();
     } else {
         OLED_TOG = false;
     };
+    if (timer_elapsed32(INACTIVE_TIMER) > OLED_LOGO_TIME) {
+        LOGO_TOG = true;
+    } else {
+        LOGO_TOG = false;
+    }
+}
+
+void oled_task_user(void) {
+    if (OLED_FORCE_OFF) {
+        oled_clear();
+        oled_off();
+        return;
+    };
+    check_inactive_timer();
     // When the bit is on (true), turn off the display
     if (OLED_TOG) {
+        oled_clear();
         oled_off();
         return;
     } else {
         oled_on();
     };
-    render_status();
+    if (OLED_LOGO_CLEAR) {
+        oled_clear();
+        OLED_LOGO_CLEAR = false;
+    }
+    if (LOGO_TOG) {
+        render_logo();
+    } else {
+        render_status();
+    }
 }
