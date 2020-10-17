@@ -27,10 +27,10 @@
  *  CAUTION!  WARNING!  CAUTION!  CAUTION!  WARNING!  CAUTION! *
  ***************************************************************/
 
-#define BAT_MEAS_TIME 60000 // time in ms to take the VBAT voltage measurement
-#define RPI_MEAS_TIME 3000 // time in ms to take the RPI voltage measurement
-//#define INACT_TIME_LOGO 120000 // time in ms to show the logo
-//#define INACT_TIME_OFF 240000 // time in ms to turn off the oled
+#define BAT_MEAS_TIME 10000 // time in ms to take the VBAT voltage measurement
+#define RPI_MEAS_TIME 12000 // time in ms to take the RPI voltage measurement
+#define INACT_OFF 120000 // time in ms to show the logo
+#define INACT_LOGO 60000 // time in ms to turn off the oled
 
 enum layer_names {
     _BASE,
@@ -52,7 +52,8 @@ enum pikeeb_keycodes {
   USB_SW = SAFE_RANGE,
   BATMODE,
   TS_SW,
-  DISP_SW,
+  BL_SW,
+  OLED_SW,
   NEW_SAFE_RANGE
 };
 
