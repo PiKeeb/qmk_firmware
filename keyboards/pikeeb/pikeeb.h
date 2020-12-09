@@ -54,7 +54,16 @@ enum pikeeb_keycodes {
   TS_SW,
   BL_SW,
   OLED_SW,
+  PG_CYCL,
+  PG_STAT,
   NEW_SAFE_RANGE
+};
+
+enum oled_pages {
+    status_page,
+    voltage_page,
+    game_page,
+    fun_page
 };
 
 /***************************************************************

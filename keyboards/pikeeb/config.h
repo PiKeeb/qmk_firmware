@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* Backlight pin settings */
 #ifdef BACKLIGHT_ENABLE
 #   define BACKLIGHT_PIN B6 // Pin for turning backligh on or off
-#   define BACKLIGHT_LEVELS 5
+#   define BACKLIGHT_LEVELS 10
 #endif
 
 /* Other pins settings */
