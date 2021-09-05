@@ -83,7 +83,7 @@
   { k64, k65, XXX, XXX, XXX, k69, k70, XXX, XXX }}
 
 
- #define LAYOUT_2UBKSPC_SPLSPC_1UNUM(k01, k37, k02, k38, k03, k39, k04, k40, k05, k41, k42,    k07,  k43, k08, k44, k09, \
+ #define LAYOUT_2UBKSPC_SPLSPC_1UNUM(k01, k37, k02, k38, k03, k39, k04, k40, k05, k41, k06,    k07,  k43, k08, k44, k09, \
                                      k10, k46, k11, k47, k12, k48, k13, k49, k14, k50, k15, k51,   k16,   k17, k53, k18, \
                                       k19,  k55, k20, k56, k21, k57, k22, k58, k23, k59, k24,  k60,  k25, k26, k62, k27, \
                                     k28, k64, k29,      k65,     k31,      k32,      k33,  k69, k34, k70, k35, k71, k36) \
@@ -112,7 +112,7 @@
  #define LAYOUT_2UBKSPC_6USPC_1UNUM(k01, k37, k02, k38, k03, k39, k04, k40, k05, k41, k42,    k07,  k43, k08, k44, k09, \
                                     k10, k46, k11, k47, k12, k48, k13, k49, k14, k50, k15, k51,   k16,   k17, k53, k18, \
                                      k19,  k55, k20, k56, k21, k57, k22, k58, k23, k59, k24,  k60,  k25, k26, k62, k27, \
-                                    k28, k64, k29,k29,            k65,              k33,  k69, k34, k70, k35, k71, k36) \
+                                    k28, k64, k29,             k65,              k33,  k69, k34, k70, k35, k71, k36) \
  {{ k01, k02, k03, k04, k05, XXX, k07, k08, k09 },                                 \
   { k10, k11, k12, k13, k14, k15, k16, k17, k18 },                                 \
   { k19, k20, k21, k22, k23, k24, k25, k26, k27 },                                 \

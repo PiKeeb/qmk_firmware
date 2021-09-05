@@ -48,6 +48,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* COL2ROW, ROW2COL*/
 #define DIODE_DIRECTION COL2ROW
 
+/* RGB LED
+ *
+ * In case you've got the PCB from the original GB and not the OSH version,
+ * please, change the RGB_DI_PIN to B4 and change B4 in the UNUSED_PINS to B6.
+ *
+ */
 #define RGB_DI_PIN B6
 #ifdef RGB_DI_PIN
   #define RGBLED_NUM 1
