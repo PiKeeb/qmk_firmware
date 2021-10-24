@@ -28,7 +28,7 @@ enum layer_names {
       /*
       PLEASE READ THIS BEFORE MODIFYING THE LAYOUT!
 
-      Lyra keyboard has got two wariants of the PCB: ALPHA and BETA.
+      Lyra keyboard has got two variants of the PCB: ALPHA and BETA.
       Alpha's got keypad on the right.
       Beta's got keypad on the left.
 
@@ -124,6 +124,11 @@ enum rgb_layers {
 void keyboard_post_init_user(void) {
     // Enable the LED layers
     rgblight_layers = rgb_layers;
+    // Enable debug console
+    debug_enable=true;
+    debug_matrix=true;
+    // Turn on the rainbow animation
+    rgblight_mode(3);
 };
 
 
@@ -159,8 +164,8 @@ bool led_update_user(led_t led_state) {
     // Lights up RGB_CAPS when led_state.caps_lock is ON
     rgblight_set_layer_state(RGB_CAPS, led_state.caps_lock);
 
-    // Lights up RGB_CAPS when led_state.num_lock is OFF
-    rgblight_set_layer_state(RGB_NUM, !led_state.num_lock);
+    // Lights up RGB_NUM when led_state.num_lock is ON
+    rgblight_set_layer_state(RGB_NUM, led_state.num_lock);
 
     return true;
 }
