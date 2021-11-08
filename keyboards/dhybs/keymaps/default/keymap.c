@@ -17,29 +17,95 @@
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
-    _BASE
+    _BASE,
+    _LVL0,
+    _LVL1,
+    _LVL2,
+    _LVL3
 };
 
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
-    QMKBEST = SAFE_RANGE,
+    DHYBS = SAFE_RANGE,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Base */
     [_BASE] = LAYOUT(
-       RGB_MOD
+       DHYBS
+    ),
+    [_LVL0] = LAYOUT(
+       KC_1
+    ),
+    [_LVL1] = LAYOUT(
+       KC_2
+    ),
+    [_LVL2] = LAYOUT(
+       KC_3
+    ),
+    [_LVL3] = LAYOUT(
+       KC_4
     )
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case QMKBEST:
+        case DHYBS:
             if (record->event.pressed) {
                 // when keycode QMKBEST is pressed
-                SEND_STRING("QMK is the best thing ever!");
+                SEND_STRING("DHYBS is the best thing ever!");
             } else {
                 // when keycode QMKBEST is released
+            }
+            break;
+    }
+    return true;
+}
+
+bool dip_switch_update_user(uint8_t index, bool active) {
+    switch (index) {
+        case 0:
+            if(active) {
+               writePin(LED0_PIN, 1);
+               rgblight_mode(6);
+               layer_on(_LVL0);
+            } else {
+               writePin(LED0_PIN, 0);
+               rgblight_mode(0);
+               layer_off(_LVL0);
+            }
+            break;
+        case 1:
+            if(active) {
+               writePin(LED1_PIN, 1);
+               rgblight_mode(12);
+               layer_on(_LVL1);
+            } else {
+               writePin(LED1_PIN, 0);
+               rgblight_mode(0);
+               layer_off(_LVL1);
+            }
+            break;
+        case 2:
+            if(active) {
+               writePin(LED2_PIN, 1);
+               rgblight_mode(15);
+               layer_on(_LVL2);
+            } else {
+               writePin(LED2_PIN, 0);
+               rgblight_mode(0);
+               layer_off(_LVL2);
+            }
+            break;
+        case 3:
+            if(active) {
+               writePin(LED3_PIN, 1);
+               rgblight_mode(17);
+               layer_on(_LVL3);
+            } else {
+               writePin(LED3_PIN, 0);
+               rgblight_mode(0);
+               layer_off(_LVL3);
             }
             break;
     }
