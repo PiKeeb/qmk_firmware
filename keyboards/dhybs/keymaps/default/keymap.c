@@ -110,7 +110,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 int DIP_VAL = 0;
 
 void keyboard_post_init_user(void) {
+#ifdef CONSOLE_ENABLE
     debug_enable=true;
+#endif
 }
 
 bool dip_switch_update_user(uint8_t index, bool active) {
