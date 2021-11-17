@@ -17,8 +17,5 @@ RGBLIGHT_ENABLE = yes       # Enable keyboard RGB underglow
 AUDIO_ENABLE = yes          # Audio output
 DIP_SWITCH_ENABLE = yes			# DIP switch
 
-# Comment this if you are not using the Adafruit BLE module
-BLUETOOTH = AdafruitBLE			# BLUETOOTH
-
 # Extra flags to save the space
 EXTRAFLAGS += -flto
