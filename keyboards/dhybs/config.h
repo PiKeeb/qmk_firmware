@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config_common.h"
 
 /* USB Device descriptor parameter */
-#define VENDOR_ID    0x494C
-#define PRODUCT_ID   0x4253
-#define DEVICE_VER   0x0001
+#define VENDOR_ID    0x494C // IL for ILWrites
+#define PRODUCT_ID   0x4253 // BS for Big Switch
+#define DEVICE_VER   0x0001 // First version
 #define MANUFACTURER ILWrites
 #define PRODUCT      DHYBS
 
