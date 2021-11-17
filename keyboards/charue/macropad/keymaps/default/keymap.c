@@ -3,6 +3,8 @@
 
 #include QMK_KEYBOARD_H
 
+#include "analog.h"
+
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
     _BASE,
@@ -28,7 +30,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void keyboard_post_init_user(void) {
+  analogReference(ADC_REF_POWER);
   debug_enable=true;
   debug_matrix=true;
   rgblight_mode(RGBLIGHT_MODE_RGB_TEST);
+}
+
+bool encoder_update_user(uint8_t index, bool clockwise) {
+    if (index == 0) {
+        if (clockwise) {
+            tap_code(KC_WH_U);
+        } else {
+            tap_code(KC_WH_D);
+        }
+    }
+    return false;
+}
+
+void matrix_scan_user(void) {
+    int POT1_VAL;
+    int POT2_VAL;
+    POT1_VAL = analogReadPin(POT1_PIN);
+    POT2_VAL = analogReadPin(POT2_PIN);
+    dprintf("Pot1 = %d\nPot2 = %d\n", POT1_VAL, POT2_VAL);
 }
