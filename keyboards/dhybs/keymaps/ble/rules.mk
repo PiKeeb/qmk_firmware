@@ -1,1 +1,4 @@
 BLUETOOTH = AdafruitBLE			# BLUETOOTH
+VIA_ENABLE = yes						# VIA
+
+EXTRAFLAGS += -flto
