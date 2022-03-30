@@ -44,10 +44,10 @@ enum custom_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Base */
     [_BASE] = LAYOUT(
-       OUT_BT
+       RGB_MOD
     ),
     [_LVL0] = LAYOUT(
-       OUT_USB
+       KC_0
     ),
     [_LVL1] = LAYOUT(
        KC_1
@@ -121,44 +121,36 @@ bool dip_switch_update_user(uint8_t index, bool active) {
             if(active) {
                writePin(LED0_PIN, 1);
                DIP_VAL |= 1 << 0;
-               dprintf("DIP value: %d\n", DIP_VAL);
             } else {
                writePin(LED0_PIN, 0);
                DIP_VAL &= ~(1 << 0);
-               dprintf("DIP value: %d\n", DIP_VAL);
             }
             break;
         case 1:
             if(active) {
                writePin(LED1_PIN, 1);
                DIP_VAL |= 1 << 1;
-               dprintf("DIP value: %d\n", DIP_VAL);
             } else {
                writePin(LED1_PIN, 0);
                DIP_VAL &= ~(1 << 1);
-               dprintf("DIP value: %d\n", DIP_VAL);
             }
             break;
         case 2:
             if(active) {
                writePin(LED2_PIN, 1);
                DIP_VAL |= 1 << 2;
-               dprintf("DIP value: %d\n", DIP_VAL);
             } else {
                writePin(LED2_PIN, 0);
                DIP_VAL &= ~(1 << 2);
-               dprintf("DIP value: %d\n", DIP_VAL);
             }
             break;
         case 3:
             if(active) {
                writePin(LED3_PIN, 1);
                DIP_VAL |= 1 << 3;
-               dprintf("DIP value: %d\n", DIP_VAL);
             } else {
                writePin(LED3_PIN, 0);
                DIP_VAL &= ~(1 << 3);
-               dprintf("DIP value: %d\n", DIP_VAL);
             }
             break;
     }
@@ -166,43 +158,33 @@ bool dip_switch_update_user(uint8_t index, bool active) {
     switch (DIP_VAL) {
         case 0:
             layer_on(_BASE);
-            rgblight_mode(RGBLIGHT_MODE_STATIC_LIGHT);
             break;
         case 1:
             layer_on(_LVL0);
-            rgblight_mode(RGBLIGHT_MODE_BREATHING);
             break;
         case 2:
             layer_on(_LVL1);
-            rgblight_mode(RGBLIGHT_MODE_RAINBOW_MOOD);
             break;
         case 3:
             layer_on(_LVL2);
-            rgblight_mode(RGBLIGHT_MODE_RAINBOW_SWIRL);
             break;
         case 4:
             layer_on(_LVL3);
-            rgblight_mode(RGBLIGHT_MODE_SNAKE);
             break;
         case 5:
             layer_on(_LVL4);
-            rgblight_mode(RGBLIGHT_MODE_KNIGHT);
             break;
         case 6:
             layer_on(_LVL5);
-            rgblight_mode(RGBLIGHT_MODE_CHRISTMAS);
             break;
         case 7:
             layer_on(_LVL6);
-            rgblight_mode(RGBLIGHT_MODE_STATIC_GRADIENT);
             break;
         case 8:
             layer_on(_LVL7);
-            rgblight_mode(RGBLIGHT_MODE_RGB_TEST);
             break;
         case 9:
             layer_on(_LVL8);
-            rgblight_mode(RGBLIGHT_MODE_ALTERNATING);
             break;
         case 10:
             layer_on(_LVL9);
