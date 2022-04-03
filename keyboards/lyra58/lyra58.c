@@ -1,4 +1,4 @@
-/* Copyright 2020 KgOfHedgehogs & ILWrites
+/* Copyright 2022 KgOfHedgehogs & ILWrites
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "lyra.h"
+#include "lyra58.h"
 
 // Optional override functions below.
 // You can leave any or all of these undefined.
