@@ -50,6 +50,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    define AdafruitBleIRQPin E6
 #endif
 
+// VIA layer number
+#define DYNAMIC_KEYMAP_LAYER_COUNT 16
+
 /* Audio */
 #ifdef AUDIO_ENABLE
 #    define AUDIO_PIN B7
