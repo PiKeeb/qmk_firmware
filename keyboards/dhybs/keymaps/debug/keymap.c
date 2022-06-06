@@ -166,43 +166,33 @@ bool dip_switch_update_user(uint8_t index, bool active) {
     switch (DIP_VAL) {
         case 0:
             layer_on(_BASE);
-            rgblight_mode(RGBLIGHT_MODE_STATIC_LIGHT);
             break;
         case 1:
             layer_on(_LVL0);
-            rgblight_mode(RGBLIGHT_MODE_BREATHING);
             break;
         case 2:
             layer_on(_LVL1);
-            rgblight_mode(RGBLIGHT_MODE_RAINBOW_MOOD);
             break;
         case 3:
             layer_on(_LVL2);
-            rgblight_mode(RGBLIGHT_MODE_RAINBOW_SWIRL);
             break;
         case 4:
             layer_on(_LVL3);
-            rgblight_mode(RGBLIGHT_MODE_SNAKE);
             break;
         case 5:
             layer_on(_LVL4);
-            rgblight_mode(RGBLIGHT_MODE_KNIGHT);
             break;
         case 6:
             layer_on(_LVL5);
-            rgblight_mode(RGBLIGHT_MODE_CHRISTMAS);
             break;
         case 7:
             layer_on(_LVL6);
-            rgblight_mode(RGBLIGHT_MODE_STATIC_GRADIENT);
             break;
         case 8:
             layer_on(_LVL7);
-            rgblight_mode(RGBLIGHT_MODE_RGB_TEST);
             break;
         case 9:
             layer_on(_LVL8);
-            rgblight_mode(RGBLIGHT_MODE_ALTERNATING);
             break;
         case 10:
             layer_on(_LVL9);
