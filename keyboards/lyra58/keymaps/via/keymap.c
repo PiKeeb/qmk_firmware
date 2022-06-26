@@ -72,7 +72,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // Setting the indicator layers
 
 // To change the color, change the HSV_XXX value to whatever color you want
-// Link to the commonly used colors in QMK: https://beta.docs.qmk.fm/using-qmk/hardware-features/lighting/feature_rgblight#colors
+// Link to the commonly used colors in QMK: https://docs.qmk.fm/#/feature_rgblight?id=colors
 
 // Color of the RGB LED for Caps Lock
 const rgblight_segment_t PROGMEM capslock_rgb_layer[] = RGBLIGHT_LAYER_SEGMENTS(
@@ -100,10 +100,9 @@ const rgblight_segment_t PROGMEM fn4_rgb_layer[] = RGBLIGHT_LAYER_SEGMENTS(
 );
 
 // Setting up the lighting array
-
 const rgblight_segment_t* const PROGMEM rgb_layers[] = RGBLIGHT_LAYERS_LIST(
-    capslock_rgb_layer,
     numlock_rgb_layer,
+    capslock_rgb_layer,
     fn1_rgb_layer,
     fn2_rgb_layer,
     fn3_rgb_layer,
@@ -112,23 +111,18 @@ const rgblight_segment_t* const PROGMEM rgb_layers[] = RGBLIGHT_LAYERS_LIST(
 
 // Define names for use in the programming section
 enum rgb_layers {
-    RGB_CAPS,
     RGB_NUM,
+    RGB_CAPS,
     RGB_FN1,
     RGB_FN2,
     RGB_FN3,
     RGB_FN4
 };
 
-
 void keyboard_post_init_user(void) {
     // Enable the LED layers
     rgblight_layers = rgb_layers;
-    // Enable debug console
-//    debug_enable=true;
-//    debug_matrix=true;
 };
-
 
 // Program the RGB layer triggers based on keyboard layer state
 
