@@ -1,6 +1,6 @@
-# unipcb_65
+# unipcb_60
 
-![unipcb_65](imgur.com image replace me!)
+![unipcb_60](imgur.com image replace me!)
 
 *A short description of the keyboard/project*
 
@@ -10,11 +10,11 @@
 
 Make example for this keyboard (after setting up your build environment):
 
-    make unipcb_65:default
+    make unipcb_60:default
 
 Flashing example for this keyboard:
 
-    make unipcb_65:default:flash
+    make unipcb_60:default:flash
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
 
