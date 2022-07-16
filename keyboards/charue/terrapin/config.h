@@ -7,10 +7,10 @@
 
 /* USB Device descriptor parameter */
 #define VENDOR_ID    0x4344 //CD for Charue Design
-#define PRODUCT_ID   0x4d41 // MA for Macropad
+#define PRODUCT_ID   0x7470 // tp for Terrapin
 #define DEVICE_VER   0x0001 // First version
 #define MANUFACTURER Charue Design
-#define PRODUCT      Macropad
+#define PRODUCT      terrapin
 
 /* key matrix size */
 #define MATRIX_ROWS 5
@@ -44,15 +44,6 @@
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
 
-/* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
-/* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
-
 /* disable these deprecated features by default */
 #define NO_ACTION_MACRO
 #define NO_ACTION_FUNCTION
-
-/* Bootmagic Lite key configuration */
-//#define BOOTMAGIC_LITE_ROW 0
-//#define BOOTMAGIC_LITE_COLUMN 0

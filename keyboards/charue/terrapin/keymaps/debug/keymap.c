@@ -11,7 +11,7 @@ enum layer_names {
     _FN
 };
 
-bool debugPots = false;
+bool debugPots = true;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Base */
