@@ -1,0 +1,18 @@
+{
+    "manufacturer": "Riba",
+    "keyboard_name": "Polygon",
+    "maintainer": "ILWrites",
+    "url": "",
+    "usb": {
+        "device_version": "0.0.1",
+        "pid": "0x5047",
+        "vid": "0x494C"
+    },
+    "layouts": {
+        "LAYOUT_all": {
+            "layout": [
+
+            ]
+        }
+    }
+}
