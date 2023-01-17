@@ -1,20 +1,21 @@
 {
     "manufacturer": "ILWrites",
-    "keyboard_name": "il/pikeeb",
+    "keyboard_name": "PiKeeb",
     "maintainer": "PiKeeb",
     "bootloader": "atmel-dfu",
     "diode_direction": "COL2ROW",
     "features": {
         "bootmagic": true,
-        "command": false,
-        "console": false,
+        "command": true,
+        "console": true,
         "extrakey": true,
         "mousekey": true,
-        "nkro": true
+        "nkro": true,
+        "encoder": true 
     },
     "matrix_pins": {
-        "cols": ["C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2"],
-        "rows": ["D1", "D1", "D1", "D1", "D1"]
+        "cols": ["B5", "B6", "B7", "E4", "E5", "D2", "D3", "D5", "D6", "D7", "E0", "E1", "C0", "C1", "C2", "C3"],
+        "rows": ["C4", "C5", "C7", "A7", "A6"]
     },
     "processor": "at90usb1286",
     "url": "",
@@ -96,5 +97,26 @@
                 { "matrix": [4, 15], "x": 15, "y": 4 }
             ]
         }
+    },
+    "indicators": {
+        "num_lock": "A4",
+        "caps_lock": "A3",
+        "scroll_lock": "A2"
+    },
+    "rgblight": {
+        "led_count": 8,
+        "pin": "F2",
+        "hue_steps": 10,
+            "saturation_steps": 17,
+            "brightness_steps": 17,
+            "animations": {
+                "knight": true,
+                "rainbow_swirl": true
+            }
+    },
+    "encoder": {
+            "rotary": [
+                { "pin_a": "F3", "pin_b": "F4" }
+            ]
     }
 }
