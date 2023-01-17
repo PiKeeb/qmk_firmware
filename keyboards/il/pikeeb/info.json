@@ -6,15 +6,16 @@
     "diode_direction": "COL2ROW",
     "features": {
         "bootmagic": true,
-        "command": false,
-        "console": false,
+        "command": true,
+        "console": true,
         "extrakey": true,
         "mousekey": true,
-        "nkro": true
+        "nkro": true,
+        "encoder": true 
     },
     "matrix_pins": {
-        "cols": ["C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2", "C2"],
-        "rows": ["D1", "D1", "D1", "D1", "D1"]
+        "cols": ["A14", "A15", "C10", "C11", "C12", "D2", "B3", "B4", "B5", "B6", "B7", "H3", "C13", "C3", "A0", "A1"],
+        "rows": ["A3", "B0", "B1", "B2", "B10"]
     },
     "processor": "STM32L433",
     "url": "",
@@ -96,5 +97,26 @@
                 { "matrix": [4, 15], "x": 15, "y": 4 }
             ]
         }
+    },
+    "indicators": {
+        "num_lock": "B12",
+        "caps_lock": "B13",
+        "scroll_lock": "B14"
+    },
+    "rgblight": {
+        "led_count": 8,
+        "pin": "A10",
+        "hue_steps": 10,
+            "saturation_steps": 17,
+            "brightness_steps": 17,
+            "animations": {
+                "knight": true,
+                "rainbow_swirl": true
+            }
+    },
+    "encoder": {
+            "rotary": [
+                { "pin_a": "A9", "pin_b": "A8" }
+            ]
     }
 }
