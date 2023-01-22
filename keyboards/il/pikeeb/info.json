@@ -14,10 +14,10 @@
         "encoder": true 
     },
     "matrix_pins": {
-        "cols": ["A14", "A15", "C10", "C11", "C12", "D2", "B3", "B4", "B5", "B6", "B7", "H3", "C13", "C3", "A0", "A1"],
-        "rows": ["A3", "B0", "B1", "B2", "B10"]
+        "cols": ["A14", "A15", "C10", "C11", "C12", "D2", "B3", "B4", "B5", "B6", "B7", "F0", "F1", "C3", "A0", "A1"],
+        "rows": ["A3", "C7", "C8", "B2", "B10"]
     },
-    "processor": "STM32L433",
+    "processor": "STM32F072",
     "url": "",
     "usb": {
         "device_version": "1.0.0",
