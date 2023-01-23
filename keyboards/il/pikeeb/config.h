@@ -3,6 +3,9 @@
 
 #pragma once
 
+/* Adding extra row for handling the JoyMouse DB direct pins */
+#define MATRIX_ROWS 6
+
 /* Setting up the OLED driver */
 #define I2C1_SCL_PIN B8
 #define I2C1_SDA_PIN B9
@@ -56,19 +59,3 @@
 
 #define OLED_INACTIVE_LOGO 60000     // time of inactivity in ms to show the logo
 #define OLED_INACTIVE_OFF 120000     // time of inactivity in ms to turn off the oled
-
-/*
- * Feature disable options
- *  These options are also useful to firmware size reduction.
- */
-
-/* disable debug print */
-//#define NO_DEBUG
-
-/* disable print */
-//#define NO_PRINT
-
-/* disable action features */
-//#define NO_ACTION_LAYER
-//#define NO_ACTION_TAPPING
-//#define NO_ACTION_ONESHOT
