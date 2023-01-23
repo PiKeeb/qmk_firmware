@@ -15,7 +15,7 @@
     },
     "matrix_pins": {
         "cols": ["A14", "A15", "C10", "C11", "C12", "D2", "B3", "B4", "B5", "B6", "B7", "F0", "F1", "C3", "A0", "A1"],
-        "rows": ["A3", "C7", "C8", "B2", "B10"]
+        "rows": ["A3", "C7", "C8", "B2", "B10", "NO_PIN"]
     },
     "processor": "STM32F072",
     "url": "",
@@ -25,7 +25,7 @@
         "vid": "0xFEED"
     },
     "layouts": {
-        "LAYOUT_65_ansi": {
+        "LAYOUT_stagger": {
             "layout": [
                 { "matrix": [0, 0], "x": 0, "y": 0 },
                 { "matrix": [0, 1], "x": 1, "y": 0 },

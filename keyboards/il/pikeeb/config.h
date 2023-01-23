@@ -3,9 +3,6 @@
 
 #pragma once
 
-/* Adding extra row for handling the JoyMouse DB direct pins */
-#define MATRIX_ROWS 6
-
 /* Setting up the OLED driver */
 #define I2C1_SCL_PIN B8
 #define I2C1_SDA_PIN B9
