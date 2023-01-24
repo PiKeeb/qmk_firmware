@@ -4,20 +4,24 @@
 #pragma once
 
 /* Setting up the OLED driver */
-#define I2C1_SCL_PIN B8
-#define I2C1_SDA_PIN B9
-#define I2C_DRIVER I2CD1
-#define OLED_FONT_H "./lib/glcdfont_pikeeb.c"
-#define OLED_FONT_START 0
-#define OLED_FONT_END 255
-#define OLED_FONT_WIDTH 6
-#define OLED_FONT_HEIGHT 8
+#ifdef OLED_ENABLE
+#   define I2C1_SCL_PIN B8
+#   define I2C1_SDA_PIN B9
+#   define I2C_DRIVER I2CD1
+#   define OLED_FONT_H "./lib/glcdfont_pikeeb.c"
+#   define OLED_FONT_START 0
+#   define OLED_FONT_END 255
+#   define OLED_FONT_WIDTH 6
+#   define OLED_FONT_HEIGHT 8
+#endif
 
 /* Audio pin settings */
-#define AUDIO_PIN A2
-#define AUDIO_PWM_DRIVER PWMD15
-#define AUDIO_PWM_CHANNEL 1
-#define AUDIO_PWM_PAL_MODE 42
+#ifdef AUDIO_ENABLE
+#   define AUDIO_PIN A2
+#   define AUDIO_PWM_DRIVER PWMD15
+#   define AUDIO_PWM_CHANNEL 1
+#   define AUDIO_PWM_PAL_MODE 42
+#endif
 
 /* Bluetooth pin settings */
 #ifdef BLUETOOTH_ENABLE
@@ -46,13 +50,45 @@
 /* Indicator pin settings */
 #define ACT_LED_PIN C15              // Active Low
 
+/* ADC channel settings */
+#define ADC_CHANNEL_TSENSOR 16       //
+#define ADC_CHANNEL_VMCU 18
+
 /* ADC pin settings */
 #define VBAT_ADC_PIN C0             // Monitoring Lithium battery voltage, 4.3v - 2.9v (with 1K/2K voltage devider: 2.86v - 1.93v)
-#define RPIV_ADC_PIN C1             // Monitoring CM4 input voltage, 5.3v max (with 1K/2K voltage devider)
+#define VRPI_ADC_PIN C1             // Monitoring CM4 input voltage, 5.3v max (with 1K/2K voltage devider)
+
+// Addresses from memory for temperature reading
+// Calibrated temperature sensor values addresses from datasheet (sections 3.10.1 and 3.10.2, tables 3 and 4)
+#define TEMP110_CAL_ADDR ((uint16_t*) ((uint32_t) 0x1FFFF7C2))
+#define TEMP30_CAL_ADDR ((uint16_t*) ((uint32_t) 0x1FFFF7B8))
+#define VDD_CALIB ((uint16_t) (330))
+#define VDD_APPLI ((uint16_t) (300))
 
 /* Time defines */
 #define VBAT_MEASURE_CYCLE_TIME 10000    // time in ms to take the VBAT voltage measurement
 #define VRPI_MEASURE_CYCLE_TIME 12000    // time in ms to take the RPI voltage measurement
 
+#define VMCU_MEASURE_CYCLE_TIME 5000 // time in ms to take the MCU voltage measurement
+#define TMCU_MEASURE_CYCLE_TIME 6000 // time in ms to take the MCU temperature measurement
+
 #define OLED_INACTIVE_LOGO 60000     // time of inactivity in ms to show the logo
 #define OLED_INACTIVE_OFF 120000     // time of inactivity in ms to turn off the oled
+
+#ifdef RGBLIGHT_ENABLE
+#   define RGBLIGHT_EFFECT_RAINBOW_MOOD
+#   define RGBLIGHT_EFFECT_RAINBOW_SWIRL
+#   define RGBLIGHT_LAYERS 
+#endif
+
+// Bongo cat animation settings
+#    define IDLE_FRAMES 5
+#    define IDLE_SPEED 20  // below this wpm value your animation will idle
+
+// #define PREP_FRAMES 1 // uncomment if >1
+#    define TAP_FRAMES 2
+#    define TAP_SPEED 40  // above this wpm value typing animation to trigger
+
+#    define ANIM_FRAME_DURATION 200  // how long each frame lasts in ms
+// #define SLEEP_TIMER 60000 // should sleep after this period of 0 wpm
+#    define ANIM_SIZE 636  // number of bytes in array, minimize for adequate firmware size, max is 1024
