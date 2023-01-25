@@ -3,6 +3,7 @@ AUDIO_ENABLE = yes          		# Enable audio output
 OLED_ENABLE = yes           		# Enable OLED display
 POINTING_DEVICE_ENABLE = yes		# Enable pointing device
 RGBLIGHT_ENABLE = yes				# ENABLE RGB lights
+WPM_ENABLE = yes					# Enable Word Per Minute (WPM) Calculcation
 
 # OLED Driver
 OLED_DRIVER = SSD1306
