@@ -21,5 +21,8 @@ SRC += analog.c
 CUSTOM_MATRIX = lite
 SRC += matrix.c
 
+# Bongocat
+SRC += lib/bongocat.c
+
 # Enable Link Time Optimization
 LTO_ENABLE = yes
