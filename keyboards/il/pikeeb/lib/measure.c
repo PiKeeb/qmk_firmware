@@ -19,7 +19,7 @@ bool RPI_OFF_STATE (void) {
     }
 };
 
-const double RPIV_VBAT_VDF = 0.66666666666666;  // for RPIV and VBAT equals to  2 / 3 because R2 / (R1 + R2), where R1 = 1K & R2 = 2K
+const double VRPI_VBAT_VDF = 0.66666666666666;  // for VRPI and VBAT equals to  2 / 3 because R2 / (R1 + R2), where R1 = 1K & R2 = 2K
 const int VMCU_VDF = 2;                         // according to datasheet (section 3.10.3), the VBAT pin is internally connected to a bridge divider by 2
 
 int vbat_measure(void) {
@@ -47,7 +47,7 @@ int vbat_measure(void) {
 
     // Start the calculation
     mV_DIV = RAW_val / ADC_RES / MEASURE_CYCLES;
-    mV_REAL = mV_DIV / RPIV_VBAT_VDF;
+    mV_REAL = mV_DIV / VRPI_VBAT_VDF;
 
     // Output to debug console
     dprintf("VBAT_RAW: %lu\n", RAW_val);
@@ -85,7 +85,7 @@ int vrpi_measure(void) {
 
     // Start the calculation
     mV_DIV = RAW_val / ADC_RES / MEASURE_CYCLES;
-    mV_REAL = mV_DIV / RPIV_VBAT_VDF;
+    mV_REAL = mV_DIV / VRPI_VBAT_VDF;
 
     // Output to debug console
     dprintf("VRPI_RAW: %lu\n", RAW_val);
