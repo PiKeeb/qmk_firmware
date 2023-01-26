@@ -1,5 +1,4 @@
 #pragma once
-#pragma message "pikeeb.h is included in the compile process"
 #include "quantum.h"
 
 // Keyboard Layer names
@@ -25,3 +24,15 @@ enum pikeeb_keycodes {
   OLED_PG_STAT,
   USER_SAFE_RANGE
 };
+
+// EEPROM values
+typedef union {
+  uint32_t raw;
+  struct {
+    bool usbswitch_high :1;
+    uint8_t current_layer_kb :8;
+    uint8_t current_layer_oled :8;
+  };
+} kb_config_t;
+
+extern kb_config_t kb_config;

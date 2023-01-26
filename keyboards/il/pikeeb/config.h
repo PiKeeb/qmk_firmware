@@ -39,13 +39,11 @@
 
 /* ADC pin settings */
 #define VBAT_ADC_PIN F0             // Monitoring Lithium battery voltage, 4.3v - 2.9v (with 1K/2K voltage devider: 2.86v - 1.93v)
-#define RPIV_ADC_PIN F1             // Monitoring CM4 input voltage, VCC/5.3v max (with 1K current limiting resistor)
+#define VRPI_ADC_PIN F1             // Monitoring CM4 input voltage, VCC/5.3v max (with 1K current limiting resistor)
 
-/* Time defines */
-#define VBAT_MEASURE_CYCLE_TIME 10000    // time in ms to take the VBAT voltage measurement
-#define VRPI_MEASURE_CYCLE_TIME 12000    // time in ms to take the RPI voltage measurement
-
-#define OLED_INACTIVE_LOGO 60000     // time of inactivity in ms to show the logo
-#define OLED_INACTIVE_OFF 120000     // time of inactivity in ms to turn off the oled
+#define OLED_INACTIVE_TIME_LOGO 60000
+#define OLED_INACTIVE_TIME_OFF 120000
+#define MEASURE_CYCLE_TIME_VBAT 10000
+#define MEASURE_CYCLE_TIME_VRPI 12000
 
 #define BONGOCAT_ENABLE
