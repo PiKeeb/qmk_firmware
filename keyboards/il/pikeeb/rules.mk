@@ -9,6 +9,7 @@ WPM_ENABLE = yes					# Enable Word Per Minute (WPM) Calculcation
 
 # OLED Driver
 OLED_DRIVER = SSD1306
+SRC += lib/oled_render.c
 
 # Audio driver
 AUDIO_DRIVER = pwm_hardware
@@ -21,6 +22,7 @@ POINTING_DEVICE_DRIVER = analog_joystick
 
 # ADC Driver for voltage measurement
 SRC += analog.c
+SRC += lib/measure.c
 
 # Custom matrix for handling the JoyMouse DB direct pins
 CUSTOM_MATRIX = lite

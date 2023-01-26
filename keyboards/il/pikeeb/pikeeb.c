@@ -1,151 +1,24 @@
-#pragma message "pikeeb.c is included in the compile process"
 #include "pikeeb.h"
-#include <analog.h>
-#include <stdio.h>
-#include <debug.h>
-#include "lib/bongocat.h"
+#include "lib/oled_render.h"
+#include "lib/measure.h"
 
 //--------------------//
 // Values & Variables //
 //--------------------//
 
-// Conditional values
-#if defined OLED_INACTIVE_LOGO && defined OLED_INACTIVE_OFF
-#   pragma message "Config's OLED_INACTIVE_* time values are used"
-    static uint32_t OLED_LOGO_TIME = OLED_INACTIVE_LOGO;
-    static uint32_t OLED_OFF_TIME = OLED_INACTIVE_OFF;
-#else
-#   pragma message "Default OLED_INACTIVE_* time values are used"
-    static uint32_t OLED_LOGO_TIME = 60000;
-    static uint32_t OLED_OFF_TIME = 120000;
-#endif
-
-#if defined VBAT_MEASURE_CYCLE_TIME && defined VRPI_MEASURE_CYCLE_TIME
-#   pragma message "Config's BAT & RPI voltage measurement cycle time values are used"
-    static uint16_t VBAT_TIME = VBAT_MEASURE_CYCLE_TIME;
-    static uint16_t VRPI_TIME = VRPI_MEASURE_CYCLE_TIME;
-#else
-#   pragma message "Default BAT & RPI voltage measurement cycle time values are used"
-    static uint16_t VBAT_TIME = 60000;
-    static uint16_t VRPI_TIME = 3000;
-#endif
-
-#if defined VMCU_MEASURE_CYCLE_TIME && defined TMCU_MEASURE_CYCLE_TIME
-#   pragma message "Config's MCU voltage & temperature measurement cycle time values are used"
-    static uint16_t VMCU_TIME = VBAT_MEASURE_CYCLE_TIME;
-    static uint16_t TMCU_TIME = VRPI_MEASURE_CYCLE_TIME;
-#else
-#   pragma message "Default MCU voltage & temperature measurement cycle time values are used"
-    static uint16_t VMCU_TIME = 60000;
-    static uint16_t TMCU_TIME = 3000;
-#endif
-
-// Timers
-static uint32_t INACTIVE_TIMER = 0;
-static uint16_t VRPI_TIMER = 0;
-static uint16_t VBAT_TIMER = 0;
-static uint16_t VMCU_TIMER = 0;
-static uint16_t TMCU_TIMER = 0;
-
-
-// State booleans
-static bool RPI_OFF_STATE = true;
-static bool VBAT_CHARGING_STATE = false;
-
 // Toggle booleans
-static bool ACT_TOG = false;
-static bool OLED_TOG = false;
-static bool LOGO_TOG = false;
-static bool OLED_TO_CLEAR = false;
-static bool OLED_FORCE_OFF = false;
+bool ACT_TOG = false;
+bool OLED_TO_CLEAR = false;
+bool OLED_FORCE_OFF = false;
 
 // Current OLED page
-static int OLED_PAGE = 0;
-
-// Analog-to-Digital Converter resolution
-static int ADC_RES = 4096;
-
-// Voltage devision factor
-static double RPIV_VBAT_VDF = 0.66666666666666; // for RPIV and VBAT equals to  2 / 3 because R2 / (R1 + R2), where R1 = 1K & R2 = 2K
-static int VMCU_VDF = 2; // according to datasheet (section 3.10.3), the VBAT pin is internally connected to a bridge divider by 2
-
-// Full battery voltage in mV
-static int VBAT_FULL = 4200;
-
-// Define values for voltage reading
-static int VBAT;
-static int VRPI;
-static int VMCU;
-
-// Define values for temperature reading
-static int TMCU;
-
-// Define number of voltage samples to take each measurement cycle
-static int NUM_SAMPLES = 10;
-
-// Define delay in ms between each measurement cycle
-static int MEASURE_DELAY = 5;
-
-// Strings for sprintf
-static char VRPI_String[9];
-static char VBAT_String[9];
-static char VMCU_String[9];
-static char TMCU_String[9];
-static char WPM_String[9];
-
-// EEPROM values
-typedef union {
-  uint32_t raw;
-  struct {
-    bool usbswitch_high :1;
-    uint8_t current_layer_kb :8;
-    uint8_t current_layer_oled :8;
-  };
-} kb_config_t;
-
-kb_config_t kb_config;
-
-//----------------//
-//  OLED symbols  //
-//----------------//
-static const char PROGMEM pilogo[] = {
-    0xBB, 0xBC, 0x00
-};
-
-static const char PROGMEM pclogo[] = {
-    0xB9, 0xBA, 0x00
-};
-
-static const char PROGMEM layerlogo[] = {
-    0xD5, 0xD6, 0x00
-};
-
-static const char PROGMEM locklogo[] = {
-    0xD7, 0xD8, 0x00
-};
-
-/*
-static const char PROGMEM offlogo[] = {
-    0xD9, 0xDA, 0x00
-};
-
-static const char PROGMEM onlogo[] = {
-    0xDB, 0xDC, 0x00
-};
-
-
-static const char PROGMEM almost_equal_to[] = {
-    0xDB, 0xDC, 0x00
-};
-*/
-
-static const char PROGMEM approx_equal_to[] = {
-    0x9D, 0x9E, 0x00
-};
+int OLED_PAGE = 0;
 
 //----------------------//
 // EEPROM configuration //
 //----------------------//
+
+kb_config_t kb_config;
 
 // Default EEPROM config in case of the EEPROM reset
 void eeconfig_init_kb(void) {
@@ -156,188 +29,6 @@ void eeconfig_init_kb(void) {
     eeconfig_update_kb(kb_config.raw);  // Write the default KB config to EEPROM
     keyboard_post_init_kb();            // Call the KB level init
 }
-
-//-------------------------------//
-// Voltage measurement functions //
-//-------------------------------//
-
-void vbat_measure(void) {
-
-    // Define values to get destroyed after the function ends
-    long RAW_val = 0;
-    int mV_DIV = 0;
-    int mV_REAL = 0;
-    int SAMPLES_TAKEN = 0;  // Samples taken counter
-    uint16_t MEASURE_DELAY_TIMER;
-
-    // Start the timer
-    MEASURE_DELAY_TIMER = timer_read();
-
-    // Take the measurements
-    writePinLow(ADC_EN_PIN); // Disable discharge protection MOSFET
-    while (SAMPLES_TAKEN < NUM_SAMPLES) {
-        if (timer_elapsed(MEASURE_DELAY_TIMER) > MEASURE_DELAY) {
-            RAW_val += analogReadPin(VBAT_ADC_PIN);   // Read the analog voltage and sum it up.
-            SAMPLES_TAKEN++;                            // Advance the counter
-            MEASURE_DELAY_TIMER = timer_read();         // Restart the timer
-        };
-    };
-    writePinHigh(ADC_EN_PIN); // Enable discharge protection MOSFET
-
-    // Stop the timer
-    MEASURE_DELAY_TIMER = 0;
-
-    // Start the calculation
-    mV_DIV = RAW_val / ADC_RES / NUM_SAMPLES;
-    mV_REAL = mV_DIV / RPIV_VBAT_VDF;
-
-    // Output the calculation
-    VBAT = mV_REAL;
-
-    // Set the state
-    if (VBAT > VBAT_FULL) {
-        VBAT_CHARGING_STATE = true;
-    } else {
-        VBAT_CHARGING_STATE = false;
-    }
-
-    // Convert int to string
-    sprintf(VBAT_String, "%u mV", mV_REAL);
-
-    // Output to debug console
-    dprintf("VBAT_RAW: %lu\n", RAW_val);
-    dprintf("VBAT_DIV: %u mV\n", mV_DIV);
-    dprintf("VBAT_REAL: %u mV\n", mV_REAL);
-}
-
-void vrpi_measure(void) {
-    // Define values to get destroyed after the function ends
-    long RAW_val = 0;
-    int mV_DIV = 0;
-    int mV_REAL = 0;
-    int SAMPLES_TAKEN = 0;
-    uint16_t MEASURE_DELAY_TIMER;
-
-    // Start the timer
-    MEASURE_DELAY_TIMER = timer_read();
-
-    // Take the measurements
-    writePinLow(ADC_EN_PIN);
-    while (SAMPLES_TAKEN < NUM_SAMPLES) {
-        if (timer_elapsed(MEASURE_DELAY_TIMER) > MEASURE_DELAY) {
-            RAW_val += analogReadPin(VRPI_ADC_PIN);    // Read the analog voltage and sum it up.
-            SAMPLES_TAKEN++;                              // Advance the counter
-            MEASURE_DELAY_TIMER = timer_read();             // Restart the timer
-        };
-    };
-    writePinHigh(ADC_EN_PIN);
-
-    // Stop the timer
-    MEASURE_DELAY_TIMER = 0;
-
-    // Start the calculation
-    mV_DIV = RAW_val / ADC_RES / NUM_SAMPLES;
-    mV_REAL = mV_DIV / RPIV_VBAT_VDF;
-
-    // Check for noise & set the state
-    if (mV_REAL < 1000) {         // Value in mV
-        mV_REAL = 0;
-        RPI_OFF_STATE = true;
-    };
-
-    // Output the calculation
-    VMCU = mV_REAL;
-
-    // Convert int to string
-    sprintf(VRPI_String, "%u mV", VRPI);
-
-    // Output to debug console
-    dprintf("VRPI_RAW: %lu\n", RAW_val);
-    dprintf("VRPI_DIV: %u mV\n", mV_DIV);
-    dprintf("VRPI: %u mV\n", mV_REAL);
-}
-
-
-void vmcu_measure(void) {
-    // Define values to get destroyed after the function ends
-    long RAW_val = 0;
-    int mV_DIV = 0;
-    int mV_REAL = 0;
-    int SAMPLES_TAKEN = 0;
-    uint16_t MEASURE_DELAY_TIMER;
-
-    // Start the timer
-    MEASURE_DELAY_TIMER = timer_read();
-
-    while (SAMPLES_TAKEN < NUM_SAMPLES) {
-        if (timer_elapsed(MEASURE_DELAY_TIMER) > MEASURE_DELAY) {
-            RAW_val +=  adc_read(TO_MUX(ADC_CHANNEL_VMCU, 0));    // Read the analog voltage and sum it up.
-            SAMPLES_TAKEN++;                              // Advance the counter
-            MEASURE_DELAY_TIMER = timer_read();             // Restart the timer
-        };
-    };
-    
-    // Stop the timer
-    MEASURE_DELAY_TIMER = 0;
-
-    // Start the calculation
-    mV_DIV = RAW_val / ADC_RES / NUM_SAMPLES;
-    mV_REAL = mV_DIV / VMCU_VDF;
-
-    // Output the calculation
-    VMCU = mV_REAL;
-
-    // Convert int to string
-    sprintf(VMCU_String, "%u mV", VRPI);
-
-    // Output to debug console
-    dprintf("VMCU_RAW: %lu\n", RAW_val);
-    dprintf("VMCU_DIV: %u mV\n", mV_DIV);
-    dprintf("VMCU: %u mV\n", mV_REAL);
-};
-
-//----------------------------------//
-// Temperature measurement function //
-//----------------------------------//
-
-void tmcu_measure(void) {
-    // Define values to get destroyed after the function ends
-    long RAW_val = 0;
-    int32_t Temp_mC = 0;
-    int SAMPLES_TAKEN = 0;
-    uint16_t MEASURE_DELAY_TIMER;
-
-    // Start the timer
-    MEASURE_DELAY_TIMER = timer_read();
-
-    while (SAMPLES_TAKEN < NUM_SAMPLES) {
-        if (timer_elapsed(MEASURE_DELAY_TIMER) > MEASURE_DELAY) {
-            RAW_val +=  adc_read(TO_MUX(ADC_CHANNEL_TSENSOR, 0));   // Read the analog voltage and sum it up.
-            SAMPLES_TAKEN++;                                        // Advance the counter
-            MEASURE_DELAY_TIMER = timer_read();                     // Restart the timer
-        };
-    };
-    
-    // Stop the timer
-    MEASURE_DELAY_TIMER = 0;
-
-    // Start the calculation
-    Temp_mC = RAW_val / NUM_SAMPLES;
-    Temp_mC = (((int32_t) Temp_mC * VDD_APPLI / VDD_CALIB) - (int32_t) *TEMP30_CAL_ADDR );
-    Temp_mC = Temp_mC * (int32_t)(110000 - 300000);
-    Temp_mC = Temp_mC / (int32_t)(*TEMP110_CAL_ADDR - *TEMP30_CAL_ADDR);
-    Temp_mC = Temp_mC + 300000;
-
-    // Output the calculation
-    TMCU = Temp_mC;
-
-    // Convert int to string
-    sprintf(TMCU_String, "%u mC", TMCU);
-
-    // Output to debug console
-    dprintf("TMCU_RAW: %lu\n", RAW_val);
-    dprintf("TMCU: %lu mC\n", Temp_mC);
-};
 
 //----------------------------//
 // Keyboard related functions //
@@ -366,12 +57,18 @@ void keyboard_post_init_kb(void) {
     setPinInput(VRPI_ADC_PIN);
 
     // Take the voltage measurements
-    vbat_measure();
-    vrpi_measure();
-    vmcu_measure();
+    VBAT = vbat_measure();
+    VRPI = vrpi_measure();
+    VMCU = vmcu_measure();
 
     // Take the temperature measurement
-    tmcu_measure();
+    TMCU = tmcu_measure();
+
+    // Initialize timers for voltage measurements
+    VBAT_TIMER = timer_read();
+    VRPI_TIMER = timer_read();
+    VMCU_TIMER = timer_read();
+    TMCU_TIMER = timer_read();
 
     // EEPROM power-on init
     kb_config.raw = eeconfig_read_kb();
@@ -381,22 +78,10 @@ void keyboard_post_init_kb(void) {
         writePinHigh(USB_SW_PIN);
     } else {
         writePinLow(USB_SW_PIN);
-    };
+    }
 
     // Read current OLED_PAGE from EEPROM
     OLED_PAGE = kb_config.current_layer_oled;
-
-    // Initialize timers for voltage measurements
-    VBAT_TIMER = timer_read();
-    VRPI_TIMER = timer_read();
-    VMCU_TIMER = timer_read();
-    TMCU_TIMER = timer_read();
-
-    // Check the inactive time for errors
-    if (OLED_OFF_TIME < OLED_LOGO_TIME) {
-        OLED_LOGO_TIME = 12000;
-        OLED_OFF_TIME = 24000;
-    };
 
     // Check RGB Light state and change the pin.
     if (!rgblight_is_enabled()) {
@@ -406,38 +91,16 @@ void keyboard_post_init_kb(void) {
     }
 }
 
-//--------------------//
-// Matrix scan checks //
-//--------------------//
+/* Housekeeping checks */
 
-void matrix_scan_kb(void) {
-    // Timers
-    if (timer_elapsed(VBAT_TIMER) > VBAT_TIME) {
-        dprint("VBAT_TIMER elapsed!\n");
-        vbat_measure();
-        VBAT_TIMER = timer_read();
-    };
-    if (timer_elapsed(VRPI_TIMER) > VRPI_TIME) {
-        dprint("VRPI_TIMER elapsed!\n");
-        vrpi_measure();
-        VRPI_TIMER = timer_read();
-    };
-    if (timer_elapsed(VMCU_TIMER) > VMCU_TIME) {
-        dprint("TMCU_TIMER elapsed!\n");
-        vmcu_measure();
-        VMCU_TIMER = timer_read();
-    };
-    if (timer_elapsed(TMCU_TIMER) > TMCU_TIME) {
-        dprint("TMCU_TIMER elapsed!\n");
-        tmcu_measure();
-        TMCU_TIMER = timer_read();
-    };
+void housekeeping_task_kb(void) {
+    check_measure_timers();
     // Toggles
     if (!rgblight_is_enabled()) {
         writePinLow(RGB_SW_PIN);
     } else {
         writePinHigh(RGB_SW_PIN);
-    };
+    }
     if (ACT_TOG) {
         writePinLow(ACT_LED_PIN);
     }
@@ -446,13 +109,11 @@ void matrix_scan_kb(void) {
     }
 }
 
-
 /* Key Record checks */
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     // Check inactivity timer
     if (record->event.pressed) {
-        INACTIVE_TIMER = 0;
         INACTIVE_TIMER = timer_read32();
         if (LOGO_TOG) {
           OLED_TO_CLEAR = true;
@@ -515,173 +176,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-//------------------------//
-// OLED Display functions //
-//------------------------//
-
-void render_logo(void) {
-    static const char PROGMEM pikeeb_logo[] = {
-        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
-        0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
-        0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
-    };
-
-    oled_set_cursor(0, 0);
-    oled_write_P(pikeeb_logo, false);
-}
-
-void render_layer_state(void) {
-    oled_write_P(layerlogo, false);
-    switch (get_highest_layer(layer_state)) {
-        case _BASE:
-            oled_write_P(PSTR("DFT"), false);
-            break;
-        case _FN1:
-            oled_write_P(PSTR("FN1"), false);
-            break;
-        case _FN2:
-            oled_write_P(PSTR("FN2"), false);
-            break;
-        case _SET:
-            oled_write_P(PSTR("SET"), false);
-            break;
-        default:
-            oled_write_P(PSTR("UND"), false);
-    };
-    oled_set_cursor(7, 0);
-}
-
-void render_lock_state(led_t led_state) {
-    oled_write_P(locklogo, false);
-    oled_write_P(led_state.num_lock ? PSTR("N") : PSTR("-"), false);
-    oled_write_P(led_state.caps_lock ? PSTR("C") : PSTR("-"), false);
-    oled_set_cursor(13, 0);
-}
-
-void render_batery_state(void) {
-    static const char PROGMEM bat_charge_logo[] = {
-    0x9B, 0x9C, 0x00
-    };
-
-    static const char PROGMEM bat_100_logo[] = {
-        0x95, 0x96, 0x00
-    };
-
-    static const char PROGMEM bat_75_logo[] = {
-        0x95, 0x98, 0x00
-    };
-
-    static const char PROGMEM bat_50_logo[] = {
-        0x95, 0x9A, 0x00
-    };
-
-    static const char PROGMEM bat_25_logo[] = {
-        0x97, 0x9A, 0x00
-    };
-
-    static const char PROGMEM bat_0_logo[] = {
-        0x99, 0x9A, 0x00
-    };
-    if (VBAT_CHARGING_STATE) {
-        oled_write_P(bat_charge_logo, false);
-        return;
-    } 
-    if ( VBAT > 4000 ) {
-        oled_write_P(bat_100_logo, false);
-    } else if ( VBAT > 3800) {
-        oled_write_P(bat_75_logo, false);
-    } else if ( VBAT > 3650 ) {
-        oled_write_P(bat_50_logo, false);
-    } else if ( VBAT > 3450 ) {
-        oled_write_P(bat_25_logo, false);
-    } else if ( VBAT > 3350 ) {
-        oled_write_P(bat_0_logo, false);
-    } else { 
-        oled_write_P(PSTR("FU"), false); 
-    }
-    oled_set_cursor(0, 2);
-}
-
-
-void render_rpi_state(void) {
-    oled_write_P(pilogo, false);
-    if ( VRPI >= 5300 ) {
-        oled_write_P(PSTR(":OV!"), false);
-    } else if ( VRPI > 4800 ) {
-        oled_write_P(PSTR(":ON "), false);
-    } else if ( VRPI > 3300 ){
-        oled_write_P(PSTR(":UV!"), false);
-    } else {
-        oled_write_P(PSTR(":OFF"), false);
-    };
-    oled_set_cursor(7, 2);
-}
-
-void render_usb_state(void) {
-    oled_write_P(PSTR("USB:"), false);
-    oled_write_P(kb_config.usbswitch_high ? pilogo : pclogo, false);
-    oled_set_cursor(16, 2);
-}
-
-void render_status(void) {
-    render_layer_state();
-    render_lock_state(host_keyboard_led_state());
-    render_batery_state();
-    render_rpi_state();
-    render_usb_state();
-}
-
-void render_voltage(void) {
-    oled_write_P(PSTR("VBAT"), false);
-    oled_write_P(approx_equal_to, false);
-    if (VBAT_CHARGING_STATE) {
-        oled_write(VBAT_String, false);
-        oled_write_ln_P(PSTR(" (CHRG)"), false);
-    } else {
-        oled_write_ln(VBAT_String, false);
-    };
-    oled_set_cursor(0, 1);
-    oled_write_P(PSTR("VRPI"), false);
-    oled_write_P(approx_equal_to, false);
-    if (RPI_OFF_STATE) {
-        oled_write_ln_P(PSTR("0 mV (OFF)"), false);
-    } else {
-        oled_write_ln(VRPI_String, false);
-    };
-    oled_set_cursor(0, 2);
-    oled_write_P(PSTR("VMCU"), false);
-    oled_write_P(approx_equal_to, false);
-    oled_write_ln(VMCU_String, false);
-    oled_set_cursor(0, 3);
-    oled_write_P(PSTR("TMCU"), false);
-    oled_write_P(approx_equal_to, false);
-    oled_write_ln(TMCU_String, false);
-}
-
-void render_wpm(void) {
-    render_anim();  // renders pixelart
-    oled_set_cursor(0, 0);                                  // sets cursor to (row, column) using charactar spacing (5 rows on 128x32 screen, anything more will overflow back to the top)
-    sprintf(WPM_String, "WPM:%03d", get_current_wpm());     // edit the string to change what shows up, edit %03d to change how many digits to show up
-    oled_write(WPM_String, false);                          // writes wpm on top left corner of string
-}
-
-void render_fun(void) {
-    oled_write_P(PSTR("FUN!"), false);
-}
-
-void check_inactive_timer(void) {
-    if (timer_elapsed32(INACTIVE_TIMER) > OLED_OFF_TIME) {
-        OLED_TOG = true;
-    } else {
-        OLED_TOG = false;
-    };
-    if (timer_elapsed32(INACTIVE_TIMER) > OLED_LOGO_TIME) {
-        LOGO_TOG = true;
-    } else {
-        LOGO_TOG = false;
-    }
-}
-
 //--------------------//
 // Main OLED function //
 //--------------------//
@@ -720,17 +214,17 @@ bool oled_task_kb(void) {
     } else {
         switch (OLED_PAGE) {
             case _OLED_VOLTAGE:
-                render_voltage();
+                render_volt_temp_page();
                 break;
             case _OLED_WPM:
-                render_wpm();
+                render_wpm_page();
                 break;
             case _OLED_FUN:
-                render_fun();
+                render_fun_page();
                 break;
             default:
                 OLED_PAGE = _OLED_STATUS;
-                render_status();
+                render_status_page();
         };
     };
     return false;

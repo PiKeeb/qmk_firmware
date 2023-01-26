@@ -58,22 +58,21 @@
 #define VBAT_ADC_PIN C0             // Monitoring Lithium battery voltage, 4.3v - 2.9v (with 1K/2K voltage devider: 2.86v - 1.93v)
 #define VRPI_ADC_PIN C1             // Monitoring CM4 input voltage, 5.3v max (with 1K/2K voltage devider)
 
-// Addresses from memory for temperature reading
 // Calibrated temperature sensor values addresses from datasheet (sections 3.10.1 and 3.10.2, tables 3 and 4)
+// Addresses from memory for temperature reading
 #define TEMP110_CAL_ADDR ((uint16_t*) ((uint32_t) 0x1FFFF7C2))
 #define TEMP30_CAL_ADDR ((uint16_t*) ((uint32_t) 0x1FFFF7B8))
-#define VDD_CALIB ((uint16_t) (330))
-#define VDD_APPLI ((uint16_t) (300))
+// VDD during calibration (usually, 3.3V or 3300mV)
+#define VDD_CALIB ((uint16_t) (3300)) //mv
 
 /* Time defines */
-#define VBAT_MEASURE_CYCLE_TIME 10000    // time in ms to take the VBAT voltage measurement
-#define VRPI_MEASURE_CYCLE_TIME 12000    // time in ms to take the RPI voltage measurement
+#define MEASURE_CYCLE_TIME_VBAT 10000   // time in ms to take the VBAT voltage measurement
+#define MEASURE_CYCLE_TIME_VRPI 12000   // time in ms to take the RPI voltage measurement
+#define MEASURE_CYCLE_TIME_VMCU 5000    // time in ms to take the MCU voltage measurement
+#define MEASURE_CYCLE_TIME_TMCU 6000    // time in ms to take the MCU temperature measurement
 
-#define VMCU_MEASURE_CYCLE_TIME 5000 // time in ms to take the MCU voltage measurement
-#define TMCU_MEASURE_CYCLE_TIME 6000 // time in ms to take the MCU temperature measurement
-
-#define OLED_INACTIVE_LOGO 60000     // time of inactivity in ms to show the logo
-#define OLED_INACTIVE_OFF 120000     // time of inactivity in ms to turn off the oled
+#define OLED_INACTIVE_TIME_LOGO 60000   // time of inactivity in ms to show the logo
+#define OLED_INACTIVE_TIME_OFF 120000   // time of inactivity in ms to turn off the oled
 
 #ifdef RGBLIGHT_ENABLE
 #   define RGBLIGHT_EFFECT_RAINBOW_MOOD
