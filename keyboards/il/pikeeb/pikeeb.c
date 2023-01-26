@@ -41,11 +41,12 @@
 #endif
 
 // Timers
-static uint32_t INACTIVE_TIMER = 0; // Inactivity timer
-static uint16_t VRPI_TIMER = 0; // Raspberyy Pi voltage measurement timer
-static uint16_t VBAT_TIMER = 0; // Battery voltage measurement timer
+static uint32_t INACTIVE_TIMER = 0;
+static uint16_t VRPI_TIMER = 0;
+static uint16_t VBAT_TIMER = 0;
 static uint16_t VMCU_TIMER = 0;
 static uint16_t TMCU_TIMER = 0;
+
 
 // State booleans
 static bool RPI_OFF_STATE = true;
@@ -113,36 +114,6 @@ static const char PROGMEM pilogo[] = {
 
 static const char PROGMEM pclogo[] = {
     0xB9, 0xBA, 0x00
-};
-
-static const char PROGMEM bat_charge_logo[] = {
-    0x9B, 0x9C, 0x00
-};
-
-static const char PROGMEM bat_100_logo[] = {
-    0x95, 0x96, 0x00
-};
-
-static const char PROGMEM bat_75_logo[] = {
-    0x95, 0x98, 0x00
-};
-
-static const char PROGMEM bat_50_logo[] = {
-    0x95, 0x9A, 0x00
-};
-
-static const char PROGMEM bat_25_logo[] = {
-    0x97, 0x9A, 0x00
-};
-
-static const char PROGMEM bat_0_logo[] = {
-    0x99, 0x9A, 0x00
-};
-
-static const char PROGMEM pikeeb_logo[] = {
-    0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
-    0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
-    0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
 };
 
 static const char PROGMEM layerlogo[] = {
@@ -548,13 +519,17 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 // OLED Display functions //
 //------------------------//
 
-// PiKeeb Logo
 void render_logo(void) {
+    static const char PROGMEM pikeeb_logo[] = {
+        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
+        0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
+        0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
+    };
+
     oled_set_cursor(0, 0);
     oled_write_P(pikeeb_logo, false);
 }
 
-// Layer state monitor
 void render_layer_state(void) {
     oled_write_P(layerlogo, false);
     switch (get_highest_layer(layer_state)) {
@@ -576,7 +551,6 @@ void render_layer_state(void) {
     oled_set_cursor(7, 0);
 }
 
-// Caps/Num Lock state monitor
 void render_lock_state(led_t led_state) {
     oled_write_P(locklogo, false);
     oled_write_P(led_state.num_lock ? PSTR("N") : PSTR("-"), false);
@@ -585,30 +559,57 @@ void render_lock_state(led_t led_state) {
 }
 
 void render_batery_state(void) {
+    static const char PROGMEM bat_charge_logo[] = {
+    0x9B, 0x9C, 0x00
+    };
+
+    static const char PROGMEM bat_100_logo[] = {
+        0x95, 0x96, 0x00
+    };
+
+    static const char PROGMEM bat_75_logo[] = {
+        0x95, 0x98, 0x00
+    };
+
+    static const char PROGMEM bat_50_logo[] = {
+        0x95, 0x9A, 0x00
+    };
+
+    static const char PROGMEM bat_25_logo[] = {
+        0x97, 0x9A, 0x00
+    };
+
+    static const char PROGMEM bat_0_logo[] = {
+        0x99, 0x9A, 0x00
+    };
     if (VBAT_CHARGING_STATE) {
         oled_write_P(bat_charge_logo, false);
-    } if (VBAT <= 4200 && VBAT > 3825) {
+        return;
+    } 
+    if ( VBAT > 4000 ) {
         oled_write_P(bat_100_logo, false);
-    } else if (VBAT <= 3825 && VBAT > 3700) {
+    } else if ( VBAT > 3800) {
         oled_write_P(bat_75_logo, false);
-    } else if (VBAT <= 3700 && VBAT > 3650 ) {
+    } else if ( VBAT > 3650 ) {
         oled_write_P(bat_50_logo, false);
-    } else if (VBAT <= 3650 && VBAT > 3450 ) {
+    } else if ( VBAT > 3450 ) {
         oled_write_P(bat_25_logo, false);
-    } else if (VBAT <= 3450) {
+    } else if ( VBAT > 3350 ) {
         oled_write_P(bat_0_logo, false);
-    };
+    } else { 
+        oled_write_P(PSTR("FU"), false); 
+    }
     oled_set_cursor(0, 2);
 }
 
 
 void render_rpi_state(void) {
     oled_write_P(pilogo, false);
-    if (VRPI >= 5300) {
+    if ( VRPI >= 5300 ) {
         oled_write_P(PSTR(":OV!"), false);
-    } else if (VRPI < 5300 && VRPI >= 4800) {
+    } else if ( VRPI > 4800 ) {
         oled_write_P(PSTR(":ON "), false);
-    } else if (VRPI < 4800 && VRPI >= 3300){
+    } else if ( VRPI > 3300 ){
         oled_write_P(PSTR(":UV!"), false);
     } else {
         oled_write_P(PSTR(":OFF"), false);
@@ -659,9 +660,9 @@ void render_voltage(void) {
 
 void render_wpm(void) {
     render_anim();  // renders pixelart
-    oled_set_cursor(0, 0);                            // sets cursor to (row, column) using charactar spacing (5 rows on 128x32 screen, anything more will overflow back to the top)
-    sprintf(WPM_String, "WPM:%03d", get_current_wpm());  // edit the string to change wwhat shows up, edit %03d to change how many digits show up
-    oled_write(WPM_String, false);                       // writes wpm on top left corner of string
+    oled_set_cursor(0, 0);                                  // sets cursor to (row, column) using charactar spacing (5 rows on 128x32 screen, anything more will overflow back to the top)
+    sprintf(WPM_String, "WPM:%03d", get_current_wpm());     // edit the string to change what shows up, edit %03d to change how many digits to show up
+    oled_write(WPM_String, false);                          // writes wpm on top left corner of string
 }
 
 void render_fun(void) {
@@ -734,4 +735,3 @@ bool oled_task_kb(void) {
     };
     return false;
 }
-
