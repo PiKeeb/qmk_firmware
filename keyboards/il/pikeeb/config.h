@@ -79,5 +79,3 @@
 #   define RGBLIGHT_EFFECT_RAINBOW_SWIRL
 #   define RGBLIGHT_LAYERS 
 #endif
-
-#define BONGOCAT_ENABLE

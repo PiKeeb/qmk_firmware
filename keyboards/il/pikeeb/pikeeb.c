@@ -1,6 +1,7 @@
 #include "pikeeb.h"
 #include "lib/oled_render.h"
 #include "lib/measure.h"
+#include "lib/snake.h"
 
 //--------------------//
 // Values & Variables //
@@ -126,6 +127,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
     // Custom keycodes
     switch (keycode) {
+        // USB Switch
         case USB_SW:
             if (record->event.pressed) {
                 dprint("USB_SW is pressed. Switching USB...\n");
@@ -140,7 +142,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-
+        // OLED Force Off
         case OLED_SW:
             if (record->event.pressed) {
                 dprint("OLED_SW pressed. Switching OLED...\n");
@@ -152,7 +154,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-
+        // OLED Page Cycle
         case OLED_PG_CYCL:
             if (record->event.pressed) {
                 OLED_PAGE ++;
@@ -170,7 +172,80 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 oled_clear();
             }
             return false;
+#ifdef SNAKE_ENABLE
+        // Control the snake
+        // Move UP
+        case KC_W:
+            if (record->event.pressed && game_is_running) {
+                snake_dir = sUP;
+            }
+            return true;
 
+        case KC_UP:
+            if (record->event.pressed && game_is_running) {
+                snake_dir = sUP;
+            }
+            return true;
+
+        // Move LEFT
+        case KC_A: 
+            if (record->event.pressed && game_is_running) {
+                snake_dir = sLEFT;
+            }
+            return true;
+
+        case KC_LEFT:
+            if (record->event.pressed && game_is_running) {
+                snake_dir = sLEFT;
+            }
+            return true;
+
+        // Move DOWN
+        case KC_S: 
+            if (record->event.pressed && game_is_running) {
+                snake_dir = sDOWN;
+            }
+            return true;
+
+        case KC_DOWN:
+            if (record->event.pressed && game_is_running) {
+                snake_dir = sDOWN;
+            }
+            return true;
+
+        // Move RIGHT
+        case KC_D: 
+            if (record->event.pressed && game_is_running) {
+                snake_dir = sRIGHT;
+            }
+            return true;
+
+        case KC_RIGHT:
+            if (record->event.pressed && game_is_running) {
+                snake_dir = sRIGHT;
+            }
+            return true;
+        
+        // Restart the game
+        case KC_Y:
+            if (record->event.pressed && !game_is_running) {
+                snakeRestart = !snakeRestart;
+            }
+            return true;
+
+        // Exit the game
+        case KC_N:
+            if (record->event.pressed && !game_is_running) {
+                OLED_PAGE = _OLED_STATUS;
+            }
+            return true;
+
+        case KC_ESC:
+            if (record->event.pressed && game_is_running) {
+                OLED_PAGE = _OLED_STATUS;
+            }
+            return true;
+#endif
         default:
             return true;
     }

@@ -1,4 +1,8 @@
 #pragma once
+
+#if defined (BONGOCAT_ENABLE) && defined (WPM_ENABLE) && defined (OLED_ENABLE)
+#pragma message "Meow! =^_^= Bongocat is enabled! =UwU="
+
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 
@@ -40,3 +44,7 @@
     Any other display width would require changing the code.
 */
 void render_anim(void);
+
+#else 
+#pragma message "Oh neow! =0_o= Bongocat is not enabled! =X_x= To enable me, make sure you have `BONGOCAT_ENABLE`, `WPM_ENABLE` and `OLED_ENABLE` set to `yes`"
+#endif
