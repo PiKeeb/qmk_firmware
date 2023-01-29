@@ -189,7 +189,7 @@ void render_wpm_page(void) {
     render_anim();
 #endif
     oled_set_cursor(0, 0);
-    sprintf(WPM_String, "WPM:%03d", get_current_wpm());
+    sprintf(WPM_String, "WPM: %03d", get_current_wpm());
     oled_write(WPM_String, false);
 }
 

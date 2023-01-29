@@ -42,21 +42,24 @@
 #   define ANALOG_JOYSTICK_BUTTON1_PIN C6
 #endif
 
-/* Switch pin setting */
-#define RGB_SW_PIN B11               // Active High
+/* IC switch pin setting */
+#define RGB_SW_PIN B11              // Active High
 #define USB_SW_PIN A13              // Low: USB = CM4; High: USB = Type C
 #define ADC_EN_PIN C2               // Active Low
 
-/* Indicator pin settings */
-#define ACT_LED_PIN C15              // Active Low
-
-/* ADC channel settings */
-#define ADC_CHANNEL_TSENSOR 16       //
-#define ADC_CHANNEL_VMCU 18
+// Physical switch setting
+#define BACK_SW_PIN C9              // States: NC or Low (needs an internal pullup)          
 
 /* ADC pin settings */
 #define VBAT_ADC_PIN C0             // Monitoring Lithium battery voltage, 4.3v - 2.9v (with 1K/2K voltage devider: 2.86v - 1.93v)
 #define VRPI_ADC_PIN C1             // Monitoring CM4 input voltage, 5.3v max (with 1K/2K voltage devider)
+
+/* Indicator pin settings */
+#define ACT_LED_PIN C15             // Active Low
+
+/* ADC channel settings */
+#define ADC_CHANNEL_TSENSOR 16      //
+#define ADC_CHANNEL_VMCU 18
 
 // Calibrated temperature sensor values addresses from datasheet (sections 3.10.1 and 3.10.2, tables 3 and 4)
 // Addresses from memory for temperature reading
@@ -79,3 +82,7 @@
 #   define RGBLIGHT_EFFECT_RAINBOW_SWIRL
 #   define RGBLIGHT_LAYERS 
 #endif
+
+// Comment this out if you don't want to write the highscore into EEPROM.
+// You'll lose your highscore on a poweroff event, if it's not written to the EEPROM.
+#define EEPROM_HIGHSCORE

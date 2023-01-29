@@ -9,6 +9,7 @@
 
 // Toggle booleans
 bool ACT_TOG = false;
+bool BACK_SW_is_low;
 bool OLED_TO_CLEAR = false;
 bool OLED_FORCE_OFF = false;
 
@@ -19,8 +20,6 @@ int OLED_PAGE = 0;
 // EEPROM configuration //
 //----------------------//
 
-kb_config_t kb_config;
-
 // Default EEPROM config in case of the EEPROM reset
 void eeconfig_init_kb(void) {
     kb_config.raw = 0;
@@ -28,6 +27,11 @@ void eeconfig_init_kb(void) {
     kb_config.current_layer_kb = _BASE;     // Default Keyboard layer = _BASE
     kb_config.current_layer_oled = _OLED_STATUS;   // Default OLED layer = _OLED_STATUS
     eeconfig_update_kb(kb_config.raw);  // Write the default KB config to EEPROM
+#ifdef EEPROM_HIGHSCORE
+    gameData.raw = 0;
+    gameData.storedHighScore = 0;
+    eeconfig_update_kb(gameData.raw);
+#endif
     keyboard_post_init_kb();            // Call the KB level init
 }
 
@@ -36,12 +40,7 @@ void eeconfig_init_kb(void) {
 //----------------------------//
 
 // Code that runs after the keyboard is turned on
-void keyboard_post_init_kb(void) {
-
-    // Debug enable
-    debug_enable = true;
-    debug_matrix = true;
-
+void keyboard_pre_init_kb(void) {
     // Setting the pins to output
     setPinOutput(RGB_SW_PIN);
     setPinOutput(USB_SW_PIN);
@@ -49,13 +48,22 @@ void keyboard_post_init_kb(void) {
     // Setting the LED pins to output
     setPinOutput(ACT_LED_PIN);
 
-    // Wake up the temperature sensor
-    ADC->CCR |= ADC_CCR_TSEN;
-
     // Setting the ADC pins
     setPinOutput(ADC_EN_PIN);
     setPinInput(VBAT_ADC_PIN);
     setPinInput(VRPI_ADC_PIN);
+
+    // Setting the physical switch pin
+    setPinInputHigh(BACK_SW_PIN);
+
+    // Wake up the temperature sensor
+    ADC->CCR |= ADC_CCR_TSEN;
+}
+
+void keyboard_post_init_kb(void) {
+    // Debug enable
+    debug_enable = true;
+    debug_matrix = true;
 
     // Take the voltage measurements
     VBAT = vbat_measure();
@@ -70,6 +78,13 @@ void keyboard_post_init_kb(void) {
     VRPI_TIMER = timer_read();
     VMCU_TIMER = timer_read();
     TMCU_TIMER = timer_read();
+
+    // Check if BACK_SW_PIN is low
+    if (readPin(BACK_SW_PIN)) {
+        BACK_SW_is_low = true;
+    } else {
+        BACK_SW_is_low = false;
+    }
 
     // EEPROM power-on init
     kb_config.raw = eeconfig_read_kb();
@@ -172,74 +187,86 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 oled_clear();
             }
             return false;
+
+// SNAKE control functions.
+
 #ifdef SNAKE_ENABLE
-        // Control the snake
-        // Move UP
+
+        // Move UP with W or UP
         case KC_W:
             if (record->event.pressed && game_is_running) {
                 snake_dir = sUP;
             }
+            moveCheck();
             return true;
 
         case KC_UP:
             if (record->event.pressed && game_is_running) {
                 snake_dir = sUP;
             }
+            moveCheck();
             return true;
 
-        // Move LEFT
+        // Move LEFT with A or LEFT
         case KC_A: 
             if (record->event.pressed && game_is_running) {
                 snake_dir = sLEFT;
             }
+            moveCheck();
             return true;
 
         case KC_LEFT:
             if (record->event.pressed && game_is_running) {
                 snake_dir = sLEFT;
             }
+            moveCheck();
             return true;
 
-        // Move DOWN
+        // Move DOWN with S or DOWN
         case KC_S: 
             if (record->event.pressed && game_is_running) {
                 snake_dir = sDOWN;
             }
+            moveCheck();
             return true;
 
         case KC_DOWN:
             if (record->event.pressed && game_is_running) {
                 snake_dir = sDOWN;
             }
+            moveCheck();
             return true;
 
-        // Move RIGHT
+        // Move RIGHT with D or RRIGHT.
         case KC_D: 
             if (record->event.pressed && game_is_running) {
                 snake_dir = sRIGHT;
             }
+            moveCheck();
             return true;
 
         case KC_RIGHT:
             if (record->event.pressed && game_is_running) {
                 snake_dir = sRIGHT;
             }
+            moveCheck();
             return true;
         
-        // Restart the game
+        // Restart the game when it asks "Play again? y/n"
         case KC_Y:
             if (record->event.pressed && !game_is_running) {
                 snakeRestart = !snakeRestart;
             }
             return true;
 
-        // Exit the game
+        // Exit the game when it asks  "Play again? y/n"
         case KC_N:
             if (record->event.pressed && !game_is_running) {
                 OLED_PAGE = _OLED_STATUS;
             }
             return true;
-
+        
+        // Force-exit the game when it's running.
         case KC_ESC:
             if (record->event.pressed && game_is_running) {
                 OLED_PAGE = _OLED_STATUS;

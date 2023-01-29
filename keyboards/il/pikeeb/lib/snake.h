@@ -2,25 +2,35 @@
 
 #if defined (SNAKE_ENABLE) && defined (OLED_ENABLE)
 #pragma message "A snake, a snake Snaaake! A snaaaake Oooh, it's a snake"
-
 #include QMK_KEYBOARD_H
 
-#ifndef OLED_DISPLAY_WIDTH
-#   define OLED_DISPLAY_WIDTH 128
+#define SNAKE_MAX_LENGTH 64
+
+#ifdef EEPROM_HIGHSCORE
+typedef union {
+  uint8_t raw;
+  struct {
+    uint8_t storedHighScore :8;
+  };
+} gameData_t;
+
+gameData_t gameData;
+
+extern gameData_t gameData;
 #endif
 
-#ifndef OLED_DISPLAY_HEIGHT
-#   define OLED_DISPLAY_HEIGHT 32
-#endif
+/**
+ * 
+ **/
+void render_game(void);
 
-// Update game values in ms
-#ifndef GAME_SPEED
-#   define GAME_SPEED 1000
-#endif
-
+/**
+ * 
+ **/
+void moveCheck(void);
 
 // Snake direction enum
-enum snakeDirection {
+enum snakeDirections {
     sUP,
     sRIGHT,
     sDOWN,
@@ -30,7 +40,7 @@ enum snakeDirection {
 /**
  * 
  **/
-void render_game(void);
+uint8_t snake_lastdir; 
 
 /**
  * 

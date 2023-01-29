@@ -1,17 +1,34 @@
 #include "snake.h"
 #include <stdio.h>
+#include <stdbool.h>
 
-#define GAME_SCALE 2
+#ifndef SNAKE_STARTING_LENGTH
+#   define SNAKE_STARTING_LENGTH 3
+#endif
+
+#ifndef FOOD_FLASH_RATE
+#   define FOOD_FLASH_RATE 450
+#endif
+
+#ifndef OLED_DISPLAY_WIDTH
+#   define OLED_DISPLAY_WIDTH 128
+#endif
+
+#ifndef OLED_DISPLAY_HEIGHT
+#   define OLED_DISPLAY_HEIGHT 32
+#endif
+
+// Update game values in ms
+#ifndef GAME_SPEED
+#   define GAME_SPEED 1000
+#endif
+
+#ifndef GAME_SCALE
+#   define GAME_SCALE 2
+#endif
 
 #define GAME_DISPLAY_WIDTH OLED_DISPLAY_WIDTH / GAME_SCALE
 #define GAME_DISPLAY_HEIGHT OLED_DISPLAY_HEIGHT / GAME_SCALE
-
-#define SNAKE_LENGTH 3
-
-#define SNAKE_MAX_LENGTH 256 // GAME_DISPLAY_WIDTH * GAME_DISPLAY_HEIGHT // Maximum length is the entire screen
-
-char scoreString[9];
-char highScoreString[9];
 
 typedef struct {
   uint8_t x;
@@ -20,12 +37,21 @@ typedef struct {
 
 SnakeSegment snake[SNAKE_MAX_LENGTH];
 
+char scoreString[9];
+char highScoreString[9];
+
 uint8_t snakeLength = 3;
 uint8_t snake_dir;
+uint8_t snake_lastdir;
 uint8_t foodX, foodY;
 uint8_t score = 0;
 uint8_t highScore = 0;
+
+uint16_t foodTimer = 0;
 uint16_t moveTimer;
+
+bool foodVisible = true;
+
 bool snakeInitialised = false;
 bool snakeRestart = false;
 bool game_is_running = false;
@@ -86,8 +112,16 @@ void update_snake(void) {
     }
 }
 
+void update_food(void) {
+    uint16_t currentTime = timer_read();
+    if(currentTime - foodTimer > FOOD_FLASH_RATE) {
+        foodVisible = !foodVisible;
+        foodTimer = currentTime;
+    }
+}
+
 void init_snake(void) {
-    snakeLength = SNAKE_LENGTH;
+    snakeLength = SNAKE_STARTING_LENGTH;
     for (uint8_t i = 0; i < snakeLength; i++) {
         snake[i].x = GAME_DISPLAY_WIDTH / 2;
         snake[i].y = GAME_DISPLAY_HEIGHT / 2;
@@ -101,9 +135,29 @@ void init_snake(void) {
     spawn_food();
     moveTimer = timer_read();
     snakeInitialised = true;
+    game_is_running = true;
+}
+
+void moveCheck(void) {
+  if (snake[0].x == snake[1].x && snake[0].y == snake[1].y) {
+    if (snake_dir == sRIGHT && snake_lastdir == sLEFT) {
+      snake_dir = snake_lastdir;
+    }
+    else if (snake_dir == sLEFT && snake_lastdir == sRIGHT) {
+      snake_dir = snake_lastdir;
+    }
+    else if (snake_dir == sUP && snake_lastdir == sDOWN) {
+      snake_dir = snake_lastdir;
+    }
+    else if (snake_dir == sDOWN && snake_lastdir == sUP) {
+      snake_dir = snake_lastdir;
+    }
+  }
+  snake_lastdir = snake_dir;
 }
 
 void move_snake(void) {
+    moveCheck();
     for (uint8_t i = snakeLength; i > 0; i--) {
         snake[i].x = snake[i - 1].x;
         snake[i].y = snake[i - 1].y;
@@ -137,6 +191,56 @@ void move_snake(void) {
     }
 }
 
+void draw_border(void) {
+    for (uint8_t x = 0; x < OLED_DISPLAY_WIDTH; x++) {
+        oled_write_pixel(x, 0, true);
+        oled_write_pixel(x, OLED_DISPLAY_HEIGHT - 1, true);
+    }
+    for (uint8_t y = 0; y < OLED_DISPLAY_HEIGHT; y++) {
+        oled_write_pixel(0, y, true);
+        oled_write_pixel(OLED_DISPLAY_WIDTH - 1, y, true);
+    }
+}
+
+void draw_dashed_border(uint8_t scale) {
+  for (uint8_t x = 0; x < OLED_DISPLAY_WIDTH; x += scale * 2) {
+    for (uint8_t y = 0; y < OLED_DISPLAY_HEIGHT; y++) {
+      if (x % 2 == 0) {
+        oled_write_pixel(x, y, true);
+      }
+    }
+  }
+  for (uint8_t y = 0; y < OLED_DISPLAY_HEIGHT; y += scale * 2) {
+    for (uint8_t x = 0; x < OLED_DISPLAY_WIDTH; x++) {
+      if (y % 2 == 0) {
+        oled_write_pixel(x, y, true);
+      }
+    }
+  }
+}
+
+void draw_block(uint8_t x, uint8_t y, uint8_t scale) {
+  for (uint8_t i = 0; i < scale; i++) {
+    for (uint8_t j = 0; j < scale; j++) {
+      oled_write_pixel(x + i, y + j, true);
+    }
+  }
+}
+
+void render_snake(void) {
+  for (uint8_t i = 0; i < snakeLength; i++) {
+    draw_block(snake[i].x, snake[i].y, GAME_SCALE);
+  }
+}
+
+
+void render_food(void) {
+    if(foodVisible) {
+        draw_block(foodX, foodY, GAME_SCALE);
+    }
+}
+
+/*
 void render_snake(void) {
   for (uint8_t i = 0; i < snakeLength; i++) {
     for (uint8_t x = 0; x < GAME_SCALE; x++) {
@@ -154,6 +258,22 @@ void render_food(void) {
     }
   }
 }
+*/
+
+void check_highscore(void){
+#ifdef EEPROM_HIGHSCORE
+  gameData.raw = eeconfig_read_kb();
+  highScore = gameData.storedHighScore;
+  if ( score > highScore ) {
+    gameData.storedHighScore = score;
+    eeconfig_update_kb(gameData.raw);
+  }
+#else
+  if (score > highScore) {
+    highScore = score;
+  }
+#endif
+}
 
 void check_restart(void){
     if (snakeRestart && !game_is_running) {
@@ -169,16 +289,19 @@ void check_restart(void){
 }
 
 void render_gameover(void) {
-    if (!game_win) {
+    if (game_win) {
         oled_clear();
         oled_set_cursor(1, 8);
-        oled_write_P(PSTR("WOW!"), false); 
+        oled_write_P(PSTR("WOW!"), false);
+        oled_set_cursor(2, 5);
+        oled_write_P(PSTR("YOU WON!"), false); 
         oled_set_cursor(3, 2);
         oled_write_P(PSTR("Go touch grass!"), false); 
     } else {
         // Update highscore
-        if (score > highScore) {
-            highScore = score;
+        check_highscore();
+        if (game_is_running) {
+            game_is_running = !game_is_running;
         }
         // Output score to scoreString
         sprintf(scoreString, "%u", score);
@@ -202,7 +325,6 @@ void render_game(void) {
     if (!snakeInitialised) {
         init_snake();
         oled_clear();
-        game_is_running = true;
         render_snake();
         render_food();
     }
@@ -212,11 +334,12 @@ void render_game(void) {
             update_snake();
         }
         oled_clear();
+        draw_border();
         render_snake();
+        update_food();
         render_food();
     } else {
         render_gameover();
-        game_is_running = false;
     }
 }
 
