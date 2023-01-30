@@ -195,67 +195,63 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         // Move UP with W or UP
         case KC_W:
             if (record->event.pressed && game_is_running) {
-                snake_dir = sUP;
+                headDir = sUP;
+                return false;
             }
-            moveCheck();
             return true;
-
         case KC_UP:
             if (record->event.pressed && game_is_running) {
-                snake_dir = sUP;
+                headDir = sUP;
+                return false;
             }
-            moveCheck();
             return true;
 
         // Move LEFT with A or LEFT
         case KC_A: 
             if (record->event.pressed && game_is_running) {
-                snake_dir = sLEFT;
+                headDir = sLEFT;
+                return false;
             }
-            moveCheck();
             return true;
-
         case KC_LEFT:
             if (record->event.pressed && game_is_running) {
-                snake_dir = sLEFT;
+                headDir = sLEFT;
+                return false;
             }
-            moveCheck();
             return true;
 
         // Move DOWN with S or DOWN
         case KC_S: 
             if (record->event.pressed && game_is_running) {
-                snake_dir = sDOWN;
+                headDir = sDOWN;
+                return false;
             }
-            moveCheck();
             return true;
-
         case KC_DOWN:
             if (record->event.pressed && game_is_running) {
-                snake_dir = sDOWN;
+                headDir = sDOWN;
+                return false;
             }
-            moveCheck();
             return true;
 
         // Move RIGHT with D or RRIGHT.
         case KC_D: 
             if (record->event.pressed && game_is_running) {
-                snake_dir = sRIGHT;
+                headDir = sRIGHT;
+                return false;
             }
-            moveCheck();
             return true;
-
         case KC_RIGHT:
             if (record->event.pressed && game_is_running) {
-                snake_dir = sRIGHT;
+                headDir = sRIGHT;
+                return false;
             }
-            moveCheck();
             return true;
         
         // Restart the game when it asks "Play again? y/n"
         case KC_Y:
             if (record->event.pressed && !game_is_running) {
-                snakeRestart = !snakeRestart;
+                gameRestart = !gameRestart;
             }
             return true;
 

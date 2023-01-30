@@ -4,8 +4,6 @@
 #pragma message "A snake, a snake Snaaake! A snaaaake Oooh, it's a snake"
 #include QMK_KEYBOARD_H
 
-#define SNAKE_MAX_LENGTH 64
-
 #ifdef EEPROM_HIGHSCORE
 typedef union {
   uint8_t raw;
@@ -24,11 +22,6 @@ extern gameData_t gameData;
  **/
 void render_game(void);
 
-/**
- * 
- **/
-void moveCheck(void);
-
 // Snake direction enum
 enum snakeDirections {
     sUP,
@@ -37,25 +30,22 @@ enum snakeDirections {
     sLEFT
 };
 
-/**
- * 
- **/
-uint8_t snake_lastdir; 
-
-/**
- * 
- **/
-uint8_t snake_dir;
-
-/**
- * 
- **/
-bool snakeRestart;
-
-/**
- * 
- **/
 bool game_is_running;
+
+/**
+ * 
+ **/
+uint8_t headDir;
+
+/**
+ * 
+ **/
+bool gameRestart;
+
+/**
+ * 
+ **/
+bool easymode;
 
 #else 
 #pragma message "Ssssshoot! Snake is not enabled! Hisssss... To enable me, make ssssure you have `SNAKE_ENABLE` and `OLED_ENABLE` sssset to `yes`"
