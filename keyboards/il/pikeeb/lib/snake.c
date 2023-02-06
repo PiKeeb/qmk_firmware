@@ -1,4 +1,5 @@
 #include "snake.h"
+#include QMK_KEYBOARD_H
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -27,8 +28,8 @@
 #   define FOOD_FLASH_RATE GAME_SPEED / 2
 #endif
 
-#define GAME_DISPLAY_WIDTH OLED_DISPLAY_WIDTH - 2
-#define GAME_DISPLAY_HEIGHT OLED_DISPLAY_HEIGHT - 2
+#define GAME_DISPLAY_WIDTH OLED_DISPLAY_WIDTH - 1
+#define GAME_DISPLAY_HEIGHT OLED_DISPLAY_HEIGHT - 1
 
 uint8_t headX, headY;
 uint8_t tailX[SNAKE_MAX_LENGTH];
@@ -55,9 +56,9 @@ bool foodVisible = true;
 
 bool snakeInitialised = false;
 bool gameRestart = false;
+bool gameOver = false;
 bool game_win = false;
-
-bool easymode = true;
+bool easymode = false;
 
 bool check_food_overlap(void) {
     if (foodX == headX && foodY == headY) {
@@ -72,44 +73,62 @@ bool check_food_overlap(void) {
 }
 
 void spawn_food(void) {
-    foodX = random() % GAME_DISPLAY_WIDTH + 1;
-    foodY = random() % GAME_DISPLAY_HEIGHT + 1;
+
+    // (rand() % (upper - lower + 1)) + lower;
+    // upper = GAME_DISPLAY_* - 1; lower = 1;
+    // ((GAME_DISPLAY_* - 1) - 1) + 1 = GAME_DISPLAY_* - 1
+
+    foodX = (random() % GAME_DISPLAY_WIDTH - 1) + 1; 
+    foodY = (random() % GAME_DISPLAY_HEIGHT - 1) + 1; 
 
     while(check_food_overlap()) {
-        foodX = random() % GAME_DISPLAY_WIDTH + 1;
-        foodY = random() % GAME_DISPLAY_HEIGHT + 1;
+        foodX = (random() % GAME_DISPLAY_WIDTH - 1) + 1;
+        foodY = (random() % GAME_DISPLAY_HEIGHT - 1) + 1;
     }
 }
 
-bool game_over(void) {
+void check_game_over(void) {
+    // Check the gameOver flag
+    if (gameOver) {
+        return;
+    }
+
     // Check the length of a tail
     if (tailLength >= SNAKE_MAX_LENGTH) {
+        OLED_TO_CLEAR = true;
         game_win = true;
-        return true;
+        gameOver = true;
     }
 
     if (!easymode) {
-        // Check if snake is at the edge of the screen
-        if (headX == GAME_DISPLAY_WIDTH + 1) {
-            return true;
-        } else if (headX == 0) {
-            return true;
+        if (headX == 0 && headY == 0) {
+            headY = 1;
+            headX = 1;
         }
-        if (headY == GAME_DISPLAY_HEIGHT + 1) {
-            return true;
+        // Check if snake is at the edge of the screen
+        if (headX == GAME_DISPLAY_WIDTH - 1) {
+            OLED_TO_CLEAR = true;
+            gameOver = true;
+        } else if (headX == 0) {
+            OLED_TO_CLEAR = true;
+            gameOver = true;
+        }
+        if (headY == GAME_DISPLAY_HEIGHT - 1) {
+            OLED_TO_CLEAR = true;
+            gameOver = true;
         } else if (headY == 0) {
-            return true;
+            OLED_TO_CLEAR = true;
+            gameOver = true;
         }
     }
 
     // Check for collision with itself
     for (uint8_t i = 1; i < tailLength; i++) {
         if (headX == tailX[i] && headY == tailY[i]) {
-            return true;
+            OLED_TO_CLEAR = true;
+            gameOver = true;
         }
-    }
-
-    return false;
+    }    
 }
 
 void checkFood(void) {
@@ -154,8 +173,11 @@ void checkMove(void) {
 
 void move_snake(void) {
     checkMove();
+
+    // Record the last tail coordinates
     lastTailX = tailX[tailLength - 1];
     lastTailY = tailY[tailLength - 1];
+
     switch (headDir) {
     case sUP:
         headY --;
@@ -171,40 +193,42 @@ void move_snake(void) {
     default:
         break;
     }
+
     headLastDir = headDir;
+
+    // Move the tail along with the head
+    for (uint8_t i = tailLength - 1; i > 0; i--) {
+        tailX[i] = tailX[i - 1];
+        tailY[i] = tailY[i - 1];
+    }
+    tailX[0] = headX;
+    tailY[0] = headY;
+
+    // Teleport the head in easy mode
     if (easymode) {
-        // Move the tail along with the head
-        for (uint8_t i = tailLength - 1; i > 0; i--) {
-            tailX[i] = tailX[i - 1];
-            tailY[i] = tailY[i - 1];
-        }
-        tailX[0] = headX;
-        tailY[0] = headY;
-        if (headX >= OLED_DISPLAY_WIDTH) {
+        if (headX >= GAME_DISPLAY_WIDTH - 1) {
             headX = 1;
-        } else if (headX <= 0) {
-            headX = OLED_DISPLAY_WIDTH - 1;
+        } else if (headX <= 1) {
+            headX = GAME_DISPLAY_WIDTH - 1;
         }
-        if (headY >= OLED_DISPLAY_HEIGHT) {
+        if (headY >= GAME_DISPLAY_HEIGHT - 1) {
             headY = 1;
-        } else if (headY <= 0) {
-            headY = OLED_DISPLAY_HEIGHT - 1;
+        } else if (headY <= 1) {
+            headY = GAME_DISPLAY_HEIGHT - 1;
         }
     }
 }
-
 
 void draw_border(void) {
-    for (uint8_t x = 0; x < OLED_DISPLAY_WIDTH; x++) {
+    for (uint8_t x = 0; x < GAME_DISPLAY_WIDTH; x++) {
         oled_write_pixel(x, 0, true);
-        oled_write_pixel(x, OLED_DISPLAY_HEIGHT - 1, true);
+        oled_write_pixel(x, GAME_DISPLAY_HEIGHT, true);
     }
-    for (uint8_t y = 0; y < OLED_DISPLAY_HEIGHT; y++) {
+    for (uint8_t y = 0; y < GAME_DISPLAY_HEIGHT; y++) {
         oled_write_pixel(0, y, true);
-        oled_write_pixel(OLED_DISPLAY_WIDTH - 1, y, true);
+        oled_write_pixel(GAME_DISPLAY_WIDTH, y, true);
     }
 }
-
 
 void render_snake(void) {
     for (uint8_t i = 0; i < tailLength; i++) {
@@ -236,15 +260,19 @@ void check_highscore(void){
 #endif
 }
 
-void restart(void){
+void check_restart(void){
+    if (gameRestart) {
+        gameOver = false;
         game_win = false;
         snakeInitialised = false;
+        score = 0;
+        OLED_TO_CLEAR = true;
         gameRestart = !gameRestart;
+    }
 }
 
 void render_gameover(void) {
     if (game_win) {
-        oled_clear();
         oled_set_cursor(0, 1);
         oled_write_P(PSTR("WOW!"), false);
         oled_set_cursor(0, 2);
@@ -257,7 +285,6 @@ void render_gameover(void) {
         // Output score to scoreString
         sprintf(scoreString, "%u", score);
         sprintf(highScoreString, "%u", highScore);
-        oled_clear();
         oled_set_cursor(0, 0);
         oled_write_P(PSTR("GAME OVER"), false); 
         oled_set_cursor(0, 1);
@@ -268,32 +295,31 @@ void render_gameover(void) {
         oled_write_ln(highScoreString, false);
         oled_set_cursor(0, 3);
         oled_write_P(PSTR("Play Again? y/n"), false);
-        if (gameRestart) {
-          restart();
-        }
     }
 }
 
 void render_game(void) {
-    if (!game_over()) {
-        if (!snakeInitialised) {
-            init_snake();
-            draw_border();
-        }
-        if (timer_elapsed(moveTimer) > GAME_SPEED) {
-            move_snake();
-            checkFood();
-            moveTimer = timer_read();
-        }
-        if(timer_elapsed(foodTimer) > FOOD_FLASH_RATE) {
-            foodVisible = !foodVisible;
-            foodTimer = timer_read();
-        }
-        render_snake();
-        render_food();
-    } else {
-        game_is_running = false;
-        oled_clear();
+    if (gameOver) {
         render_gameover();
+        check_restart();
+        return;
     }
+    if (!easymode) {
+        draw_border();
+    }
+    if (!snakeInitialised) {
+        init_snake();
+    }
+    if (timer_elapsed(moveTimer) > GAME_SPEED) {
+        move_snake();
+        checkFood();
+        moveTimer = timer_read();
+    }
+    if(timer_elapsed(foodTimer) > FOOD_FLASH_RATE) {
+        foodVisible = !foodVisible;
+        foodTimer = timer_read();
+    }
+    render_snake();
+    render_food();
+    check_game_over();
 }

@@ -10,7 +10,6 @@
 // Toggle booleans
 bool ACT_TOG = false;
 bool BACK_SW_is_low;
-bool OLED_TO_CLEAR = false;
 bool OLED_FORCE_OFF = false;
 
 // Current OLED page
@@ -108,7 +107,6 @@ void keyboard_post_init_kb(void) {
 }
 
 /* Housekeeping checks */
-
 void housekeeping_task_kb(void) {
     check_measure_timers();
     // Toggles
@@ -317,8 +315,8 @@ bool oled_task_kb(void) {
             case _OLED_WPM:
                 render_wpm_page();
                 break;
-            case _OLED_FUN:
-                render_fun_page();
+            case _OLED_GAME:
+                render_game_page();
                 break;
             default:
                 OLED_PAGE = _OLED_STATUS;
