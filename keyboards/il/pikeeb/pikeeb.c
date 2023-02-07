@@ -12,7 +12,7 @@ bool ACT_TOG = false;
 bool BACK_SW_is_low;
 bool OLED_FORCE_OFF = false;
 
-// Current OLED page
+// Starting OLED page
 int OLED_PAGE = 0;
 
 //----------------------//
@@ -22,16 +22,16 @@ int OLED_PAGE = 0;
 // Default EEPROM config in case of the EEPROM reset
 void eeconfig_init_kb(void) {
     kb_config.raw = 0;
-    kb_config.usbswitch_high = true;    // Default USB = Type C
-    kb_config.current_layer_kb = _BASE;     // Default Keyboard layer = _BASE
-    kb_config.current_layer_oled = _OLED_STATUS;   // Default OLED layer = _OLED_STATUS
-    eeconfig_update_kb(kb_config.raw);  // Write the default KB config to EEPROM
+    kb_config.usbswitch_high = true;                // Default USB = Type C
+    kb_config.current_layer_kb = _BASE;             // Default Keyboard layer = _BASE
+    kb_config.current_layer_oled = _OLED_STATUS;    // Default OLED layer = _OLED_STATUS
+    eeconfig_update_kb(kb_config.raw);              // Write the default KB config to EEPROM
 #ifdef EEPROM_HIGHSCORE
     gameData.raw = 0;
     gameData.storedHighScore = 0;
     eeconfig_update_kb(gameData.raw);
 #endif
-    keyboard_post_init_kb();            // Call the KB level init
+    keyboard_pre_init_kb();            // Call the KB level init
 }
 
 //----------------------------//
@@ -95,7 +95,7 @@ void keyboard_post_init_kb(void) {
         writePinLow(USB_SW_PIN);
     }
 
-    // Read current OLED_PAGE from EEPROM
+    // Read the startign OLED_PAGE from EEPROM
     OLED_PAGE = kb_config.current_layer_oled;
 
     // Check RGB Light state and change the pin.
@@ -126,7 +126,7 @@ void housekeeping_task_kb(void) {
 /* Key Record checks */
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
-    // Check inactivity timer
+
     if (record->event.pressed) {
         INACTIVE_TIMER = timer_read32();
         if (LOGO_TOG) {
@@ -140,6 +140,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
     // Custom keycodes
     switch (keycode) {
+
         // USB Switch
         case USB_SW:
             if (record->event.pressed) {
@@ -147,14 +148,15 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 kb_config.usbswitch_high = !kb_config.usbswitch_high;
                 eeconfig_update_kb(kb_config.raw);
                 if (kb_config.usbswitch_high) {
-                    dprint("CM Mode\n");
+                    dprint("Type C Mode\n");
                     writePinHigh(USB_SW_PIN);
                 } else {
-                    dprint("CM Mode\n");
+                    dprint("CM4 Mode\n");
                     writePinLow(USB_SW_PIN);
                 }
             }
             return false;
+
         // OLED Force Off
         case OLED_SW:
             if (record->event.pressed) {
@@ -167,22 +169,21 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
+
         // OLED Page Cycle
         case OLED_PG_CYCL:
             if (record->event.pressed) {
                 OLED_PAGE ++;
                 kb_config.current_layer_oled = OLED_PAGE;
                 eeconfig_update_kb(kb_config.raw);
-                oled_clear();
+                OLED_TO_CLEAR = true;                 
             }
             return false;
 
         case OLED_PG_STAT:
             if (record->event.pressed) {
                 OLED_PAGE = _OLED_STATUS;
-                kb_config.current_layer_oled = OLED_PAGE;
-                eeconfig_update_kb(kb_config.raw);
-                oled_clear();
+                OLED_TO_CLEAR = true;                 
             }
             return false;
 
@@ -248,15 +249,19 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         
         // Restart the game when it asks "Play again? y/n"
         case KC_Y:
-            if (record->event.pressed && !game_is_running) {
+            if (record->event.pressed && gameOver) {
                 gameRestart = !gameRestart;
             }
             return true;
-
+        
         // Exit the game when it asks  "Play again? y/n"
         case KC_N:
-            if (record->event.pressed && !game_is_running) {
+            if (record->event.pressed && gameOver) {
                 OLED_PAGE = _OLED_STATUS;
+                gameOver = !gameOver;
+                gameRestart = !gameRestart;
+                return false;
+
             }
             return true;
         
@@ -264,6 +269,17 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case KC_ESC:
             if (record->event.pressed && game_is_running) {
                 OLED_PAGE = _OLED_STATUS;
+                gameRestart = !gameRestart;
+                game_is_running = !game_is_running;
+                return false;
+            }
+            return true;
+
+        // Toggle the easymode
+        case KC_H:
+            if (record->event.pressed && game_is_running) {
+                easymode = !easymode;
+                return false;
             }
             return true;
 #endif
@@ -277,7 +293,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 //--------------------//
 
 bool oled_task_kb(void) {
-    // Defer to the keymap if they want to override
+    // Defer to the user keymap if they want to override
     if(!oled_task_user()) {
         return false;
     }

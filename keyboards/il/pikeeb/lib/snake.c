@@ -60,28 +60,31 @@ bool gameOver = false;
 bool game_win = false;
 bool easymode = false;
 
-bool check_food_overlap(void) {
+bool food_overlapped(void) {
     if (foodX == headX && foodY == headY) {
-            return true;
+        return true;
     }
     for (uint8_t i = 0; i < tailLength; i++) {
         if (foodX == tailX[i] && foodY == tailY[i]) {
             return true;
         }
     };
+    if (foodX == GAME_DISPLAY_WIDTH || foodY == GAME_DISPLAY_HEIGHT) {
+        return true;
+    }
     return false;
 }
 
 void spawn_food(void) {
 
-    // (rand() % (upper - lower + 1)) + lower;
+    // (random() % (upper - lower + 1)) + lower;
     // upper = GAME_DISPLAY_* - 1; lower = 1;
-    // ((GAME_DISPLAY_* - 1) - 1) + 1 = GAME_DISPLAY_* - 1
+    // (random() % GAME_DISPLAY_WIDTH - 1) + 1
 
     foodX = (random() % GAME_DISPLAY_WIDTH - 1) + 1; 
     foodY = (random() % GAME_DISPLAY_HEIGHT - 1) + 1; 
 
-    while(check_food_overlap()) {
+    while(food_overlapped()) {
         foodX = (random() % GAME_DISPLAY_WIDTH - 1) + 1;
         foodY = (random() % GAME_DISPLAY_HEIGHT - 1) + 1;
     }
