@@ -28,8 +28,19 @@ SRC += lib/measure.c
 CUSTOM_MATRIX = lite
 SRC += matrix.c
 
-# Bongocat
-SRC += lib/bongocat.c
+# Some Fun Stuff
+SNAKE_ENABLE = yes
+BONGOCAT_ENABLE = yes
 
 # Enable Link Time Optimization
 LTO_ENABLE = yes
+
+ifeq ($(strip $(SNAKE_ENABLE)), yes)
+    SRC += lib/snake.c
+    OPT_DEFS += -DSNAKE_ENABLE
+endif
+
+ifeq ($(strip $(BONGOCAT_ENABLE)), yes)
+    SRC += lib/bongocat.c
+    OPT_DEFS += -DBONGOCAT_ENABLE
+endif

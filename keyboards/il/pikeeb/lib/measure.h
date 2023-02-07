@@ -3,11 +3,11 @@
 #include <stdio.h>
 
 #ifndef VBAT_100PERCENT
-#define VBAT_100PERCENT 4200 // mV
+#define VBAT_100PERCENT 4200
 #endif
 
 #ifndef VRPI_OFF
-#define VRPI_OFF 1000 // mV
+#define VRPI_OFF 1000
 #endif
 
 #ifndef MEASURE_CYCLE_TIME_VBAT

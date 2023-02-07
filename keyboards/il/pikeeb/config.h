@@ -29,10 +29,13 @@
 #   define ANALOG_JOYSTICK_BUTTON1_PIN A0
 #endif
 
-/* Switch pin setting */
+/* Switch pin settings */
 #define RGB_SW_PIN A5               // Active High
 #define USB_SW_PIN B0               // Low: USB = CM4; High: USB = Type C
 #define ADC_EN_PIN E7               // Active Low
+
+// Physical switch setting
+#define BACK_SW_PIN F5              // States: NC or Low (needs an internal pullup)
 
 /* Indicator pin settings */
 #define ACT_LED_PIN E3              // Active Low
@@ -45,5 +48,3 @@
 #define OLED_INACTIVE_TIME_OFF 120000
 #define MEASURE_CYCLE_TIME_VBAT 10000
 #define MEASURE_CYCLE_TIME_VRPI 12000
-
-#define BONGOCAT_ENABLE

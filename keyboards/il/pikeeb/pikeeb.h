@@ -9,20 +9,24 @@ enum layer_kb_names {
   _SET
 };
 
+// Clears OLED when true
+bool OLED_TO_CLEAR;
+
 // OLED Layer names
 enum layer_oled_names {
   _OLED_STATUS,
   _OLED_VOLTAGE,
   _OLED_WPM,
-  _OLED_FUN
+  _OLED_GAME
 };
 
+// Custom keycodes
 enum pikeeb_keycodes {
   USB_SW = SAFE_RANGE,
   OLED_SW,
   OLED_PG_CYCL,
   OLED_PG_STAT,
-  USER_SAFE_RANGE
+  USER_SAFE_RANGE // Safe range for a user defined keycodes
 };
 
 // EEPROM values
@@ -34,5 +38,7 @@ typedef union {
     uint8_t current_layer_oled :8;
   };
 } kb_config_t;
+
+kb_config_t kb_config;
 
 extern kb_config_t kb_config;

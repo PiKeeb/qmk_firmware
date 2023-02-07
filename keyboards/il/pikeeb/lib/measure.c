@@ -63,7 +63,7 @@ int vbat_measure(void) {
 int vrpi_measure(void) {
     // Define values to get destroyed after the function ends
     long RAW_val = 0;
-    int mV_DIV = 0;
+//    int mV_DIV = 0;
     int mV_REAL = 0;
     int CURRENT_CYCLE = 0;
     uint16_t MEASURE_DELAY_TIMER;
@@ -83,12 +83,13 @@ int vrpi_measure(void) {
     writePinHigh(ADC_EN_PIN);
 
     // Start the calculation
-    mV_DIV = RAW_val / ADC_RES / MEASURE_CYCLES;
-    mV_REAL = mV_DIV / VRPI_VBAT_VDF;
+    mV_REAL = RAW_val / ADC_RES / MEASURE_CYCLES;
+//    mV_DIV = RAW_val / ADC_RES / MEASURE_CYCLES;
+//    mV_REAL = mV_DIV / VRPI_VBAT_VDF;
 
     // Output to debug console
     dprintf("VRPI_RAW: %lu\n", RAW_val);
-    dprintf("VRPI_DIV: %u mV\n", mV_DIV);
+//    dprintf("VRPI_DIV: %u mV\n", mV_DIV);
     dprintf("VRPI: %u mV\n", mV_REAL);
 
     // Output to string

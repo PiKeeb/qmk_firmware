@@ -78,9 +78,9 @@ void render_volt_page(void);
 void render_wpm_page(void);
 
 /**
- * Function to render the page of fun (WIP)
+ * Function to render the page with the snake game
  **/
-void render_fun_page(void);
+void render_game_page(void);
 
 /**
  * Function to check the `INACTIVE_TIMER` value and to toggle `OLED_TOG` and `LOGO_TOG`.
