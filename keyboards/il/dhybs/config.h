@@ -59,10 +59,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 /* RGB */
+/* Warning! When changing RGBLIGHT_LIMIT_VAL make sure that the fuse (PTC) is up to spec with the consumed current! */
 #define RGB_DI_PIN C6
 #ifdef RGB_DI_PIN
-#    define RGBLED_NUM 20
-#    define RGBLIGHT_ANIMATIONS
+#   define RGBLED_NUM 20
+#   define RGBLIGHT_ANIMATIONS
+#   define RGBLIGHT_LIMIT_VAL 150
 #endif
 
 /* LEDs */
@@ -73,12 +75,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
-
-/* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
-/* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
-
-/* disable these deprecated features by default */
-#define NO_ACTION_MACRO
-#define NO_ACTION_FUNCTION
