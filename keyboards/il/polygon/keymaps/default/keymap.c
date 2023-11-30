@@ -1,4 +1,4 @@
-// Copyright 2023 ILWrites (@PiKeeb)
+// Copyright 2023 PiKeeb (@PiKeeb)
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include QMK_KEYBOARD_H
@@ -18,11 +18,3 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [0] =   { ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) }
 };
 #endif
-
-void keyboard_post_init_user(void) {
-  // Customise these values to desired behaviour
-  debug_enable=true;
-  debug_matrix=true;
-  //debug_keyboard=true;
-  //debug_mouse=true;
-};
