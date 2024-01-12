@@ -19,4 +19,8 @@
 //#define NO_ACTION_TAPPING
 //#define NO_ACTION_ONESHOT
 
-#define RGBLIGHT_LIMIT_VAL 50
+/* Audio */
+#ifdef AUDIO_ENABLE
+#   define AUDIO_PIN B7
+#   define STARTUP_SONG SONG(STARTUP_SOUND)
+#endif

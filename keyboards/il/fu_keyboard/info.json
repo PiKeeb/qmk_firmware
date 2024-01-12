@@ -22,8 +22,8 @@
     "url": "",
     "usb": {
         "device_version": "1.0.0",
-        "pid": "0x0000",
-        "vid": "0xFEED"
+        "vid": "0x696C",
+        "pid": "0x6675"
     },
     "layouts": {
         "LAYOUT_fuk": {
@@ -217,12 +217,15 @@
             ]
         }
     },
+    "ws2812": {
+        "pin": "E3"
+    },
     "rgblight": {
         "led_count": 182,
-        "pin": "E3",
-        "hue_steps": 10,
-        "saturation_steps": 17,
-        "brightness_steps": 17,
+        "max_brightness": 50, 
+        "hue_steps": 20,
+        "saturation_steps": 20,
+        "brightness_steps": 20,
         "animations": {
             "knight": true,
             "rainbow_swirl": true,
@@ -231,10 +234,10 @@
     },
     "encoder": {
             "rotary": [
-                { "pin_a": "B3", "pin_b": "B2"  },
-                {  "pin_a": "B1", "pin_b": "B0"  },
-                {  "pin_a": "E7", "pin_b": "E6"  },
-                {  "pin_a": "E4", "pin_b": "E5" }
+                { "pin_a": "B3", "pin_b": "B2" },
+                { "pin_a": "B1", "pin_b": "B0" },
+                { "pin_a": "E7", "pin_b": "E6" },
+                { "pin_a": "E4", "pin_b": "E5" }
             ]
     }
 }
